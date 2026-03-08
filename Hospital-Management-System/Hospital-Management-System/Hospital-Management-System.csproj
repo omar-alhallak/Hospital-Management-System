@@ -43,15 +43,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Doctor\ContractDoctor.cs" />
-    <Compile Include="Doctor\StaffDoctor.cs" />
-    <Compile Include="Doctor\TraineeDoctor.cs" />
-    <Compile Include="Patient\ExternalPatient.cs" />
-    <Compile Include="Patient\InternalPatient.cs" />
+    <Compile Include="Entities\Doctor\ContractDoctor.cs" />
+    <Compile Include="Entities\Doctor\StaffDoctor.cs" />
+    <Compile Include="Entities\Doctor\TraineeDoctor.cs" />
+    <Compile Include="Entities\Patient\ExternalPatient.cs" />
+    <Compile Include="Entities\Patient\InternalPatient.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Treatment\ExternalTreatment.cs" />
-    <Compile Include="Treatment\InternalTreatment.cs" />
+    <Compile Include="Entities\Treatment\ExternalTreatment.cs" />
+    <Compile Include="Entities\Treatment\InternalTreatment.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
