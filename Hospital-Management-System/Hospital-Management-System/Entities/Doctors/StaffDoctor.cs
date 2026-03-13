@@ -1,34 +1,48 @@
 ﻿using System;
-using Hospital_Management_System.Entities.Doctor;
 
-namespace Hospital_Management_System.Doctors
+namespace Hospital_Management_System.Entities.Doctors
 {
     public class StaffDoctor : Doctor
     {
-        private double monthlySalary;
-        private DateTime employmentDate;
+        private decimal salary;
+        public decimal Salary
+        {
+            get { return salary; }
+            set { salary = value; }
+        }
 
-        public double MonthlySalary { get { return monthlySalary; } set { monthlySalary = value; } }
-        public DateTime EmploymentDate { get { return employmentDate; } set { employmentDate = value; } }
+        private DateTime hireDate;
+        public DateTime HireDate
+        {
+            get { return hireDate; }
+            set { hireDate = value; }
+        }
 
         public StaffDoctor() : base() { }
-        public StaffDoctor(int id, string name, string address, DateTime birthDate, double salary, DateTime empDate)
-            : base(id, name, address, birthDate)
+
+        public StaffDoctor(int doctorId, string doctorName, string address, DateTime birthDate, decimal salary, DateTime hireDate)
+            : base(doctorId, doctorName, address, birthDate)
         {
-            this.monthlySalary = salary;
-            this.employmentDate = empDate;
+            this.salary = salary;
+            this.hireDate = hireDate;
         }
 
-        public double CalculateCurrentSalary()
+        public override decimal CalculateSalary()
         {
-            int years = DateTime.Now.Year - employmentDate.Year;
-            int increments = years / 2;
-            double finalSalary = monthlySalary;
-            for (int i = 0; i < increments; i++)
+            int years = DateTime.Now.Year - hireDate.Year;
+
+            int periods = years / 2;
+
+            decimal currentSalary = salary;
+
+            for (int i = 0; i < periods; i++)
             {
-                finalSalary += finalSalary * 0.10;
+                currentSalary += currentSalary * 0.10m;
             }
-            return finalSalary;
+
+            return currentSalary;
         }
+
+        ~StaffDoctor() { }
     }
 }

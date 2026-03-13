@@ -1,33 +1,48 @@
 ﻿using System;
 
-namespace Hospital_Management_System.Entities.Doctor
+namespace Hospital_Management_System.Entities.Doctors
 {
-    public class Doctor
+    public abstract class Doctor
     {
-        private int Doctorid;
-        public int DoctorID { get { return Doctorid; } set { Doctorid = value; } }
+        private int doctorId;
+        public int DoctorID
+        {
+            get { return doctorId; }
+            set { doctorId = value; }
+        }
 
-
-        private string Doctorname;
-        public string DoctorName { get { return Doctorname; } set { Doctorname = value; } }
-
+        private string doctorName;
+        public string DoctorName
+        {
+            get { return doctorName; }
+            set { doctorName = value; }
+        }
 
         private string address;
-        public string Address { get { return address; } set { address = value; } }
-
+        public string Address
+        {
+            get { return address; }
+            set { address = value; }
+        }
 
         private DateTime birthDate;
-        public DateTime BirthDate { get { return birthDate; } set { birthDate = value; } }
+        public DateTime BirthDate
+        {
+            get { return birthDate; }
+            set { birthDate = value; }
+        }
 
         public Doctor() { }
 
-        public Doctor(int Doctorid, string Doctorname, string address, DateTime birthDate)
+        public Doctor(int doctorId, string doctorName, string address, DateTime birthDate)
         {
-            this.Doctorid = Doctorid;
-            this.Doctorname = Doctorname;
+            this.doctorId = doctorId;
+            this.doctorName = doctorName;
             this.address = address;
             this.birthDate = birthDate;
         }
+
+        public abstract decimal CalculateSalary();
 
         ~Doctor() { }
     }

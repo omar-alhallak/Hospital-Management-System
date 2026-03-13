@@ -1,34 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using Hospital_Management_System.Entities.Doctor;
-using Hospital_Management_System.Entities.Treatments;
+using Hospital_Management_System.DataStructures;
+using Hospital_Management_System.Entities.Doctors;
 
-namespace Hospital_Management_System.Treatments
+namespace Hospital_Management_System.Entities.Treatments
 {
     public class InternalTreatment : Treatment
-    {       
+    {
         private DateTime dischargeDate;
-        public DateTime DischargeDate { get { return dischargeDate; } set { dischargeDate = value; } }
-
+        public DateTime DischargeDate
+        {
+            get { return dischargeDate; }
+            set { dischargeDate = value; }
+        }
 
         private int departmentId;
-        public int DepartmentID { get { return departmentId; } set { departmentId = value; } }
+        public int DepartmentID
+        {
+            get { return departmentId; }
+            set { departmentId = value; }
+        }
 
-
-        private List<Doctor> supervisors;
-        public List<Doctor> Supervisors { get { return supervisors; } set { supervisors = value; } }
+        private LinkedList<Doctor> supervisors;
+        public LinkedList<Doctor> Supervisors
+        {
+            get { return supervisors; }
+            set { supervisors = value; }
+        }
 
         public InternalTreatment() : base()
         {
-            supervisors = new List<Doctor>();
+            supervisors = new LinkedList<Doctor>();
         }
 
-        public InternalTreatment(int Treatmentid, DateTime treatmentDate, double cost, DateTime dischargeDate, int departmentId)
-            : base(Treatmentid, treatmentDate, cost)
+        public InternalTreatment(int treatmentId, int patientId, DateTime treatmentDate, decimal cost, DateTime dischargeDate, int departmentId)
+            : base(treatmentId, patientId, treatmentDate, cost)
         {
             this.dischargeDate = dischargeDate;
             this.departmentId = departmentId;
-            supervisors = new List<Doctor>();
+            supervisors = new LinkedList<Doctor>();
         }
+
+        ~InternalTreatment() { }
     }
 }

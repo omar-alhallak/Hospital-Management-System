@@ -1,25 +1,33 @@
 ﻿using System;
-using Hospital_Management_System.Entities.Doctor;
-using Hospital_Management_System.Entities.Treatments;
+using Hospital_Management_System.Entities.Doctors;
 
-namespace Hospital_Management_System.Treatments
+namespace Hospital_Management_System.Entities.Treatments
 {
     public class ExternalTreatment : Treatment
-    {       
-        private int clinicId;
-        public int ClinicID { get { return clinicId; } set { clinicId = value; } }
+    {
+        private int clinicNumber;
+        public int ClinicNumber
+        {
+            get { return clinicNumber; }
+            set { clinicNumber = value; }
+        }
 
-
-        private Doctor doctor;
-        public Doctor Doctor { get { return doctor; } set { doctor = value; } }
+        private Doctor treatingDoctor;
+        public Doctor TreatingDoctor
+        {
+            get { return treatingDoctor; }
+            set { treatingDoctor = value; }
+        }
 
         public ExternalTreatment() : base() { }
 
-        public ExternalTreatment(int Treatmentid, DateTime treatmentDate, double cost, int clinicId, Doctor doctor)
-            : base(Treatmentid, treatmentDate, cost)
+        public ExternalTreatment(int treatmentId, int patientId, DateTime treatmentDate, decimal cost, int clinicNumber, Doctor treatingDoctor)
+            : base(treatmentId, patientId, treatmentDate, cost)
         {
-            this.clinicId = clinicId;
-            this.doctor = doctor;
+            this.clinicNumber = clinicNumber;
+            this.treatingDoctor = treatingDoctor;
         }
+
+        ~ExternalTreatment() { }
     }
 }

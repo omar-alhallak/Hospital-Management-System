@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataStructures\LinkedList.cs" />
     <Compile Include="Entities\Doctors\ContractDoctor.cs" />
     <Compile Include="Entities\Doctors\Doctor.cs" />
     <Compile Include="Entities\Doctors\StaffDoctor.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="Entities\Patients\InternalPatient.cs" />
     <Compile Include="Entities\Patients\Patients.cs" />
     <Compile Include="Entities\Treatments\Treatment.cs" />
+    <Compile Include="DataStructures\Node.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\Treatments\ExternalTreatment.cs" />

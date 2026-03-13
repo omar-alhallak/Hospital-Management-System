@@ -1,29 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
-using Hospital_Management_System.Treatments;
-using Hospital_Management_System.Entities.Patients;
+using Hospital_Management_System.DataStructures;
+using Hospital_Management_System.Entities.Treatments;
 
-namespace Hospital_Management_System.Patients
+namespace Hospital_Management_System.Entities.Patients
 {
     public class ExternalPatient : Patient
     {
-        private List<ExternalTreatment> externalTreatments;
-        public List<ExternalTreatment> ExternalTreatments { get { return externalTreatments; } set { externalTreatments = value; } }
-       
-        
-        private bool isAdmitted;
-        public bool IsAdmitted { get { return isAdmitted; } set { isAdmitted = value; } }
+        private LinkedList<ExternalTreatment> externalTreatments;
+        public LinkedList<ExternalTreatment> ExternalTreatments
+        {
+            get { return externalTreatments; }
+            set { externalTreatments = value; }
+        }
+
+        private bool isAccepted;
+        public bool IsAccepted
+        {
+            get { return isAccepted; }
+            set { isAccepted = value; }
+        }
 
         public ExternalPatient() : base()
         {
-            externalTreatments = new List<ExternalTreatment>();
+            externalTreatments = new LinkedList<ExternalTreatment>();
         }
 
-        public ExternalPatient(int Patientid, string Patientname, string address, DateTime birthDate)
-            : base(Patientid, Patientname, address, birthDate)
+        public ExternalPatient(int patientId, string patientName, string address, DateTime birthDate, bool isAccepted)
+            : base(patientId, patientName, address, birthDate)
         {
-            externalTreatments = new List<ExternalTreatment>();
-            isAdmitted = false;
+            this.isAccepted = isAccepted;
+            externalTreatments = new LinkedList<ExternalTreatment>();
         }
 
         ~ExternalPatient() { }

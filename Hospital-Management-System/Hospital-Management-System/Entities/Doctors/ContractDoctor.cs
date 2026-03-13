@@ -1,17 +1,29 @@
 ﻿using System;
-using Hospital_Management_System.Entities.Doctor;
 
-namespace Hospital_Management_System.Doctors
+namespace Hospital_Management_System.Entities.Doctors
 {
     public class ContractDoctor : Doctor
     {
-        public ContractDoctor() : base() { }
-        public ContractDoctor(int id, string name, string address, DateTime birthDate)
-            : base(id, name, address, birthDate) { }
-
-        public double CalculateCommission(double totalTreatmentCosts)
+        private decimal totalTreatmentCost;
+        public decimal TotalTreatmentCost
         {
-            return totalTreatmentCosts * 0.50;
+            get { return totalTreatmentCost; }
+            set { totalTreatmentCost = value; }
         }
+
+        public ContractDoctor() : base() { }
+
+        public ContractDoctor(int doctorId, string doctorName, string address, DateTime birthDate, decimal totalTreatmentCost)
+            : base(doctorId, doctorName, address, birthDate)
+        {
+            this.totalTreatmentCost = totalTreatmentCost;
+        }
+
+        public override decimal CalculateSalary()
+        {
+            return totalTreatmentCost * 0.5m;
+        }
+
+        ~ContractDoctor() { }
     }
 }
