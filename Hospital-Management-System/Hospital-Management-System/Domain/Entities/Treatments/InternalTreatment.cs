@@ -1,8 +1,8 @@
 ﻿using System;
-using Hospital_Management_System.DataStructures;
-using Hospital_Management_System.Entities.Doctors;
+using Hospital_Management_System.Infrastructure.DataStructures;
+using Hospital_Management_System.Domain.Entities.Doctors;
 
-namespace Hospital_Management_System.Entities.Treatments
+namespace Hospital_Management_System.Domain.Entities.Treatments
 {
     public class InternalTreatment : Treatment
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hospital_Management_System.Entities.Patients
+namespace Hospital_Management_System.Domain.Entities.Patients
 {
     public abstract class Patient
     {

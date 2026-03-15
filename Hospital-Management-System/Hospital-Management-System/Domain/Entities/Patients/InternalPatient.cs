@@ -1,8 +1,8 @@
 ﻿using System;
-using Hospital_Management_System.DataStructures;
-using Hospital_Management_System.Entities.Treatments;
+using Hospital_Management_System.Infrastructure.DataStructures;
+using Hospital_Management_System.Domain.Entities.Treatments;
 
-namespace Hospital_Management_System.Entities.Patients
+namespace Hospital_Management_System.Domain.Entities.Patients
 {
     public class InternalPatient : Patient
     {

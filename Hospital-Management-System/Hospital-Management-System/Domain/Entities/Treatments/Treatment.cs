@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hospital_Management_System.Entities.Treatments
+namespace Hospital_Management_System.Domain.Entities.Treatments
 {
     public abstract class Treatment
     {

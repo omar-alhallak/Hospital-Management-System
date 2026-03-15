@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Hospital_Management_System.DataStructures
+namespace Hospital_Management_System.Infrastructure.DataStructures
 {
     public class Node<T>
     {
