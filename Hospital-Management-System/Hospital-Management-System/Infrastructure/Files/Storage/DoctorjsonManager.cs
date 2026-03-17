@@ -1,6 +1,6 @@
 ﻿using System.IO;
 using System.Text.Json;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Application.Management;
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Infrastructure.Files.Data;
 using Hospital_Management_System.Infrastructure.DataStructures;
@@ -30,10 +30,10 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             this.filePath = filePath;
         }
 
-        public void SaveDoctors(DoctorRecord doctorRecord)
+        public void SaveDoctors(DoctorManagement doctorRecord)
         {
             DoctorData data = new DoctorData();
-            data.BaseStaffSalary = Doctor.BaseStaffSalary;
+            data.BaseStaffSalary = StaffDoctor.BaseStaffSalary;
 
             Node<Doctor> current = doctorRecord.Doctors.Head;
 
@@ -97,9 +97,9 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             File.WriteAllText(filePath, json);
         }
 
-        public DoctorRecord LoadDoctors()
+        public DoctorManagement LoadDoctors()
         {
-            DoctorRecord doctorRecord = new DoctorRecord();
+            DoctorManagement doctorRecord = new DoctorManagement();
 
             if (!File.Exists(filePath))
                 return doctorRecord;
@@ -111,7 +111,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             if (data == null)
                 return doctorRecord;
 
-            Doctor.BaseStaffSalary = data.BaseStaffSalary;
+            StaffDoctor.BaseStaffSalary = data.BaseStaffSalary;
 
             foreach (DoctorItemData item in data.Doctors)
             {

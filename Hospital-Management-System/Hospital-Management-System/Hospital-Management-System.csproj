@@ -71,9 +71,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application\Records\DoctorRecord.cs" />
+    <Compile Include="Application\Management\DoctorManagement.cs" />
+    <Compile Include="Application\Services\PatientReportService.cs" />
+    <Compile Include="UI\Display\DoctorDisplay.cs" />
     <Compile Include="Infrastructure\DataStructures\LinkedList.cs" />
-    <Compile Include="Application\Records\PatientRecord.cs" />
+    <Compile Include="Application\Management\PatientManagement.cs" />
     <Compile Include="Infrastructure\Files\Data\DoctorData.cs" />
     <Compile Include="Infrastructure\Files\Storage\DoctorjsonManager.cs" />
     <Compile Include="Domain\Entities\Doctors\ContractDoctor.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="Domain\Entities\Patients\Patients.cs" />
     <Compile Include="Domain\Entities\Treatments\Treatment.cs" />
     <Compile Include="Infrastructure\DataStructures\Node.cs" />
+    <Compile Include="UI\Display\PatientDisplay.cs" />
     <Compile Include="UI\Menus\DoctorMenu.cs" />
     <Compile Include="UI\Menus\MainMenu.cs" />
     <Compile Include="UI\Input\MenuInput.cs" />
@@ -99,7 +102,7 @@
     <Compile Include="Application\Services\SearchService.cs" />
     <Compile Include="Infrastructure\Files\Data\TreatmentData.cs" />
     <Compile Include="Infrastructure\Files\Storage\TreatmentJsonManager.cs" />
-    <Compile Include="Application\Helpers\Validation.cs" />
+    <Compile Include="Application\Services\ValidationServices.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

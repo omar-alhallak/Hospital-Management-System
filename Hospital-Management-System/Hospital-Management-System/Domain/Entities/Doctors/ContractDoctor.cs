@@ -2,7 +2,7 @@
 
 namespace Hospital_Management_System.Domain.Entities.Doctors
 {
-    public class ContractDoctor : Doctor
+    public class ContractDoctor : Doctor // طبيب المتقاعد
     {
         private decimal totalTreatmentCost;
         public decimal TotalTreatmentCost
@@ -31,23 +31,23 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             salary = 0;
         }
 
-        public void AddTreatmentCost(decimal cost)
+        public void AddTreatmentCost(decimal cost) // عند إضافة علاج يزيد و يحدث الراتب
         {
             totalTreatmentCost += cost;
             CalculateSalary();
         }
 
-        public void RemoveTreatmentCost(decimal cost)
+        public void RemoveTreatmentCost(decimal cost) // عند حذف علاج ينقصه و يحدث الراتب
         {
             totalTreatmentCost -= cost;
 
-            if (totalTreatmentCost < 0)
-                totalTreatmentCost = 0;
+            if (totalTreatmentCost < 0) { 
+                totalTreatmentCost = 0; }
 
             CalculateSalary();
         }
 
-        public override decimal CalculateSalary()
+        public override decimal CalculateSalary() // Salary = 50% من قيمة المعالجات
         {
             salary = totalTreatmentCost * 0.5m;
             return salary;

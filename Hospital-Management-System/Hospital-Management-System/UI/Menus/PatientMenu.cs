@@ -1,16 +1,17 @@
 ﻿using System;
 using Hospital_Management_System.UI.Input;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Application.Management;
 using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Infrastructure.DataStructures;
+using Hospital_Management_System.UI.Display;
 
 namespace Hospital_Management_System.UI.Menus
 {
     public class PatientMenu
     {
-        private PatientRecord patientRecord;
+        private PatientManagement patientRecord;
 
-        public PatientMenu(PatientRecord patientRecord)
+        public PatientMenu(PatientManagement patientRecord)
         {
             this.patientRecord = patientRecord;
         }
@@ -175,7 +176,7 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
-                patientRecord.DisplayPatient(patient);
+                PatientDisplay.DisplayPatient(patient);
 
                 Console.WriteLine("Choose field to update:");
                 Console.WriteLine("1. Patient Name");
@@ -322,7 +323,7 @@ namespace Hospital_Management_System.UI.Menus
 
                         if (!internalPatient.IsDischarged)
                         {
-                            patientRecord.DisplayPatient(internalPatient);
+                            PatientDisplay.DisplayPatient(internalPatient);
                             found = true;
                         }
                     }
@@ -396,7 +397,7 @@ namespace Hospital_Management_System.UI.Menus
 
                         if (!externalPatient.IsAccepted)
                         {
-                            patientRecord.DisplayPatient(externalPatient);
+                            PatientDisplay.DisplayPatient(externalPatient);
                             found = true;
                         }
                     }
@@ -476,19 +477,19 @@ namespace Hospital_Management_System.UI.Menus
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
-                    patientRecord.DisplayAllPatients();
+                    PatientDisplay.DisplayAllPatients(patientRecord.Patients);
                     Console.WriteLine("Total Patients: " + patientRecord.GetPatientsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
-                    patientRecord.DisplayInternalPatients();
+                    PatientDisplay.DisplayInternalPatients(patientRecord.Patients);
                     Console.WriteLine("Total Internal Patients: " + patientRecord.GetInternalPatientsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
                 {
-                    patientRecord.DisplayExternalPatients();
+                    PatientDisplay.DisplayExternalPatients(patientRecord.Patients);
                     Console.WriteLine("Total External Patients: " + patientRecord.GetExternalPatientsCount());
                     MenuInput.Pause();
                 }
@@ -545,7 +546,7 @@ namespace Hospital_Management_System.UI.Menus
             }
             else
             {
-                patientRecord.DisplayPatient(patient);
+                PatientDisplay.DisplayPatient(patient);
             }
 
             MenuInput.Pause();
@@ -562,7 +563,7 @@ namespace Hospital_Management_System.UI.Menus
             LinkedList<Patient> result = patientRecord.SearchPatientsByName(name);
 
             Console.WriteLine();
-            patientRecord.DisplayPatientsList(result);
+            PatientDisplay.DisplayPatientsList(result);
             MenuInput.Pause();
         }
     }

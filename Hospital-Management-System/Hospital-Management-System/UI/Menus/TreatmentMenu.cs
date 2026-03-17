@@ -1,19 +1,21 @@
-﻿using Hospital_Management_System.Application.Records;
+﻿using System;
+using Hospital_Management_System.UI.Input;
+using Hospital_Management_System.UI.Display;
+using Hospital_Management_System.Application.Management;
+using Hospital_Management_System.Application.Services;
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Domain.Entities.Treatments;
-using Hospital_Management_System.UI.Input;
-using System;
 
 namespace Hospital_Management_System.UI.Menus
 {
     public class TreatmentMenu
     {
-        private PatientRecord patientRecord;
-        private DoctorRecord doctorRecord;
+        private PatientManagement patientRecord;
+        private DoctorManagement doctorRecord;
         private const int DepartmentCount = 3;
 
-        public TreatmentMenu(PatientRecord patientRecord, DoctorRecord doctorRecord)
+        public TreatmentMenu(PatientManagement patientRecord, DoctorManagement doctorRecord)
         {
             this.patientRecord = patientRecord;
             this.doctorRecord = doctorRecord;
@@ -109,7 +111,7 @@ namespace Hospital_Management_System.UI.Menus
                 if (treatmentId == null)
                     continue;
 
-                Patient patient;
+                Patient patient = null;
                 int patientId;
 
                 while (true)
@@ -131,14 +133,21 @@ namespace Hospital_Management_System.UI.Menus
                         continue;
                     }
 
+                    if ((key == ConsoleKey.D1 || key == ConsoleKey.NumPad1) && patient is ExternalPatient)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Cannot add internal treatment to an external patient.");
+                        Console.WriteLine("External patients can only have external treatments.");
+                        Console.ResetColor();
+                        continue;
+                    }
+
                     patientId = enteredPatientId.Value;
                     break;
                 }
 
                 if (patientId == -1)
                     continue;
-
-                patient = patientRecord.FindPatientById(patientId);
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
@@ -624,20 +633,20 @@ namespace Hospital_Management_System.UI.Menus
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
-                    patientRecord.DisplayAllTreatments();
-                    Console.WriteLine("Total Treatments: " + patientRecord.GetAllTreatmentsCount());
+                    PatientDisplay.DisplayAllTreatments(patientRecord.Patients);
+                    Console.WriteLine("Total Treatments: " + PatientReportService.GetAllTreatmentsCount(patientRecord.Patients));
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
-                    patientRecord.DisplayInternalTreatments();
-                    Console.WriteLine("Total Internal Treatments: " + patientRecord.GetInternalTreatmentsCount());
+                    PatientDisplay.DisplayInternalTreatments(patientRecord.Patients);
+                    Console.WriteLine("Total Internal Treatments: " + PatientReportService.GetInternalTreatmentsCount(patientRecord.Patients));
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
                 {
-                    patientRecord.DisplayExternalTreatments();
-                    Console.WriteLine("Total External Treatments: " + patientRecord.GetExternalTreatmentsCount());
+                    PatientDisplay.DisplayExternalTreatments(patientRecord.Patients);
+                    Console.WriteLine("Total External Treatments: " + PatientReportService.GetExternalTreatmentsCount(patientRecord.Patients));
                     MenuInput.Pause();
                 }
             }
@@ -652,7 +661,8 @@ namespace Hospital_Management_System.UI.Menus
             if (patientId == null) return;
 
             Console.WriteLine();
-            patientRecord.DisplayPatientTreatments(patientId.Value);
+            Patient patient = patientRecord.FindPatientById(patientId.Value);
+            PatientDisplay.DisplayPatientTreatments(patient);
             MenuInput.Pause();
         }
 
@@ -668,7 +678,8 @@ namespace Hospital_Management_System.UI.Menus
             if (endDate == null) return;
 
             Console.WriteLine();
-            patientRecord.DisplayPatientsTreatedInAllDepartments(
+            PatientReportService.DisplayPatientsTreatedInAllDepartments(
+                patientRecord.Patients,
                 startDate.Value,
                 endDate.Value,
                 DepartmentCount
@@ -691,7 +702,8 @@ namespace Hospital_Management_System.UI.Menus
             DateTime? endDate = MenuInput.ReadValidDate("End Date: ");
             if (endDate == null) return;
 
-            int count = patientRecord.CountPatientsInDepartment(
+            int count = PatientReportService.CountPatientsInDepartment(
+                patientRecord.Patients,
                 departmentId.Value,
                 startDate.Value,
                 endDate.Value

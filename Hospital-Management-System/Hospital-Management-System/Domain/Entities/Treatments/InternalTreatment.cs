@@ -4,7 +4,7 @@ using Hospital_Management_System.Domain.Entities.Doctors;
 
 namespace Hospital_Management_System.Domain.Entities.Treatments
 {
-    public class InternalTreatment : Treatment
+    public class InternalTreatment : Treatment // معالجة داخلية
     {
         private DateTime? dischargeDate;
         public DateTime? DischargeDate

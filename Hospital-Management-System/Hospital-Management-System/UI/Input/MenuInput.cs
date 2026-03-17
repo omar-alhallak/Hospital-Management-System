@@ -1,5 +1,5 @@
-﻿using Hospital_Management_System.Application.Helpers;
-using Hospital_Management_System.Application.Records;
+﻿using Hospital_Management_System.Application.Services;
+using Hospital_Management_System.Application.Management;
 using System;
 using System.Text;
 
@@ -54,7 +54,7 @@ namespace Hospital_Management_System.UI.Input
                 if (input == null)
                     return null;
 
-                if (Validation.IsValidName(input))
+                if (ValidationServices.IsValidName(input))
                     return input;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -72,7 +72,7 @@ namespace Hospital_Management_System.UI.Input
                 if (input == null)
                     return null;
 
-                if (Validation.IsValidAddress(input))
+                if (ValidationServices.IsValidAddress(input))
                     return input;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -90,7 +90,7 @@ namespace Hospital_Management_System.UI.Input
                 if (input == null)
                     return null;
 
-                if (Validation.IsValidName(input))
+                if (ValidationServices.IsValidName(input))
                     return input;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -109,7 +109,7 @@ namespace Hospital_Management_System.UI.Input
                     return null;
 
                 int value;
-                if (int.TryParse(input, out value) && Validation.IsPositiveInt(value))
+                if (int.TryParse(input, out value) && ValidationServices.IsPositiveInt(value))
                     return value;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -128,7 +128,7 @@ namespace Hospital_Management_System.UI.Input
                     return null;
 
                 decimal value;
-                if (decimal.TryParse(input, out value) && Validation.IsPositiveDecimal(value))
+                if (decimal.TryParse(input, out value) && ValidationServices.IsPositiveDecimal(value))
                     return value;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -165,7 +165,7 @@ namespace Hospital_Management_System.UI.Input
                 if (date == null)
                     return null;
 
-                if (Validation.IsValidBirthDate(date.Value))
+                if (ValidationServices.IsValidBirthDate(date.Value))
                     return date;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -174,7 +174,7 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static int? ReadUniqueDoctorId(string label, DoctorRecord doctorRecord)
+        public static int? ReadUniqueDoctorId(string label, DoctorManagement doctorRecord)
         {
             while (true)
             {
@@ -183,7 +183,7 @@ namespace Hospital_Management_System.UI.Input
                 if (id == null)
                     return null;
 
-                if (Validation.IsUniqueDoctorId(doctorRecord, id.Value))
+                if (ValidationServices.IsUniqueDoctorId(doctorRecord, id.Value))
                     return id;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -192,7 +192,7 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static int? ReadUniquePatientId(string label, PatientRecord patientRecord)
+        public static int? ReadUniquePatientId(string label, PatientManagement patientRecord)
         {
             while (true)
             {
@@ -201,7 +201,7 @@ namespace Hospital_Management_System.UI.Input
                 if (id == null)
                     return null;
 
-                if (Validation.IsUniquePatientId(patientRecord, id.Value))
+                if (ValidationServices.IsUniquePatientId(patientRecord, id.Value))
                     return id;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -210,7 +210,7 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static int? ReadUniqueTreatmentId(string label, PatientRecord patientRecord)
+        public static int? ReadUniqueTreatmentId(string label, PatientManagement patientRecord)
         {
             while (true)
             {
@@ -219,7 +219,7 @@ namespace Hospital_Management_System.UI.Input
                 if (id == null)
                     return null;
 
-                if (Validation.IsUniqueTreatmentId(patientRecord, id.Value))
+                if (ValidationServices.IsUniqueTreatmentId(patientRecord, id.Value))
                     return id;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -237,7 +237,7 @@ namespace Hospital_Management_System.UI.Input
                 if (date == null)
                     return null;
 
-                if (Validation.IsValidHireDate(birthDate, date.Value))
+                if (ValidationServices.IsValidHireDate(birthDate, date.Value))
                     return date;
 
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -361,7 +361,7 @@ namespace Hospital_Management_System.UI.Input
                     return;
                 }
 
-                if (Validation.IsValidTreatmentDates(treatment.Value, discharge.Value))
+                if (ValidationServices.IsValidTreatmentDates(treatment.Value, discharge.Value))
                 {
                     treatmentDate = treatment.Value;
                     dischargeDate = discharge.Value;

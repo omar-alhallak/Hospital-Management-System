@@ -2,7 +2,7 @@
 
 namespace Hospital_Management_System.Domain.Entities.Doctors
 {
-    public class TraineeDoctor : Doctor
+    public class TraineeDoctor : Doctor // طبيب المتدرب
     {
         private DateTime trainingStartDate;
         public DateTime TrainingStartDate
@@ -32,24 +32,23 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
         {
             this.trainingStartDate = trainingStartDate;
             this.trainingEndDate = trainingEndDate;
-            this.salary = 0;
+            salary = 0;
             CalculateSalary();
         }
 
-        public override decimal CalculateSalary()
+        public override decimal CalculateSalary() // First year = 50% / Secound year = 75%
         {
-            DateTime referenceDate = trainingEndDate ?? DateTime.Now;
+            DateTime TrainingEndORNow = trainingEndDate ?? DateTime.Now;
 
-            int years = referenceDate.Year - trainingStartDate.Year;
+            int years = TrainingEndORNow.Year - trainingStartDate.Year;
 
-            if (referenceDate.Month < trainingStartDate.Month ||
-               (referenceDate.Month == trainingStartDate.Month && referenceDate.Day < trainingStartDate.Day))
+            if (TrainingEndORNow.Month < trainingStartDate.Month || (TrainingEndORNow.Month == trainingStartDate.Month && TrainingEndORNow.Day < trainingStartDate.Day))
             { years--; }
 
-            if (years < 1)
-                salary = Doctor.BaseStaffSalary * 0.5m;
-            else
-                salary = Doctor.BaseStaffSalary * 0.75m;
+            if (years < 1) {
+                salary = StaffDoctor.BaseStaffSalary * 0.5m; }
+            else { 
+                salary = StaffDoctor.BaseStaffSalary * 0.75m; }
 
             return salary;
         }

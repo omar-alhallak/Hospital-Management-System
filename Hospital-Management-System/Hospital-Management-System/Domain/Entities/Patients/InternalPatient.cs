@@ -1,10 +1,10 @@
 ﻿using System;
-using Hospital_Management_System.Infrastructure.DataStructures;
 using Hospital_Management_System.Domain.Entities.Treatments;
+using Hospital_Management_System.Infrastructure.DataStructures;
 
 namespace Hospital_Management_System.Domain.Entities.Patients
 {
-    public class InternalPatient : Patient
+    public class InternalPatient : Patient // مريض داخلي
     {
         private LinkedList<InternalTreatment> internalTreatments;
         public LinkedList<InternalTreatment> InternalTreatments

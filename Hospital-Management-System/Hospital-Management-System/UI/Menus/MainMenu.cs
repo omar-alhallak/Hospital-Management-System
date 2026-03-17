@@ -1,22 +1,22 @@
 ﻿using System;
 using Hospital_Management_System.UI.Input;
 using Hospital_Management_System.Infrastructure.Files.Storage;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Application.Management;
 
 namespace Hospital_Management_System.UI.Menus
 {
     public class MainMenu
     {
-        private DoctorRecord doctorRecord;
-        private PatientRecord patientRecord;
+        private DoctorManagement doctorRecord;
+        private PatientManagement patientRecord;
 
         private DoctorJsonManager doctorJsonManager;
         private PatientJsonManager patientJsonManager;
         private TreatmentJsonManager treatmentJsonManager;
 
         public MainMenu(
-            DoctorRecord doctorRecord,
-            PatientRecord patientRecord,
+            DoctorManagement doctorRecord,
+            PatientManagement patientRecord,
             DoctorJsonManager doctorJsonManager,
             PatientJsonManager patientJsonManager,
             TreatmentJsonManager treatmentJsonManager)

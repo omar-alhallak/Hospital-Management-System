@@ -2,7 +2,7 @@
 
 namespace Hospital_Management_System.Domain.Entities.Doctors
 {
-    public class StaffDoctor : Doctor
+    public class StaffDoctor : Doctor // طبيب المثبت
     {
         private DateTime hireDate;
         public DateTime HireDate
@@ -18,34 +18,35 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             set { salary = value; }
         }
 
+        public static decimal BaseStaffSalary { get; set; } = 1000m;
+
         public StaffDoctor() : base() { }
 
         public StaffDoctor(int doctorId, string doctorName, string address, DateTime birthDate, DateTime hireDate)
             : base(doctorId, doctorName, address, birthDate)
         {
             this.hireDate = hireDate;
-            this.salary = 0;
+            salary = 0;
             CalculateSalary();
         }
 
-        public override decimal CalculateSalary()
+        public override decimal CalculateSalary() // BaseSalary + 10% (Every 2 years)
         {
-            decimal currentSalary = Doctor.BaseStaffSalary;
+            decimal FinalSalary = BaseStaffSalary;
 
             int years = DateTime.Now.Year - hireDate.Year;
 
-            if (DateTime.Now.Month < hireDate.Month ||
-               (DateTime.Now.Month == hireDate.Month && DateTime.Now.Day < hireDate.Day))
-            { years--; }
+            if (DateTime.Now.Month < hireDate.Month || (DateTime.Now.Month == hireDate.Month && DateTime.Now.Day < hireDate.Day)) 
+            { years--; } 
 
-            int periods = years / 2;
+            int NumberOfIncreases = years / 2;
 
-            for (int i = 0; i < periods; i++)
+            for (int i = 0; i < NumberOfIncreases; i++)
             {
-                currentSalary += currentSalary * 0.10m;
+                FinalSalary += FinalSalary * 0.10m;
             }
 
-            salary = currentSalary;
+            salary = FinalSalary;
             return salary;
         }
 

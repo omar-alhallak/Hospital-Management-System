@@ -7,7 +7,7 @@ using Hospital_Management_System.Infrastructure.DataStructures;
 using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Domain.Entities.Treatments;
 using Hospital_Management_System.Domain.Entities.Doctors;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Application.Management;
 
 namespace Hospital_Management_System.Infrastructure.Files.Storage
 {
@@ -32,7 +32,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         ~TreatmentJsonManager() { }
 
-        public void SaveTreatments(PatientRecord patientRecord)
+        public void SaveTreatments(PatientManagement patientRecord)
         {
             List<TreatmentData> treatmentList = new List<TreatmentData>();
 
@@ -121,7 +121,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             File.WriteAllText(filePath, json);
         }
 
-        public void LoadTreatments(PatientRecord patientRecord, DoctorRecord doctorRecord)
+        public void LoadTreatments(PatientManagement patientRecord, DoctorManagement doctorRecord)
         {
             if (!File.Exists(filePath))
                 return;

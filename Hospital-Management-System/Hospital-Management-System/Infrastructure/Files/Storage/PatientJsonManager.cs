@@ -5,7 +5,7 @@ using System.Text.Json;
 using Hospital_Management_System.Infrastructure.Files.Data;
 using Hospital_Management_System.Infrastructure.DataStructures;
 using Hospital_Management_System.Domain.Entities.Patients;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Application.Management;
 
 namespace Hospital_Management_System.Infrastructure.Files.Storage
 {
@@ -30,7 +30,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         ~PatientJsonManager() { }
 
-        public void SavePatients(PatientRecord patientRecord)
+        public void SavePatients(PatientManagement patientRecord)
         {
             List<PatientData> patientList = new List<PatientData>();
 
@@ -78,9 +78,9 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             File.WriteAllText(filePath, json);
         }
 
-        public PatientRecord LoadPatients()
+        public PatientManagement LoadPatients()
         {
-            PatientRecord patientRecord = new PatientRecord();
+            PatientManagement patientRecord = new PatientManagement();
 
             if (!File.Exists(filePath))
                 return patientRecord;

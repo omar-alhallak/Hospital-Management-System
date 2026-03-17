@@ -1,6 +1,7 @@
 ﻿using System;
 using Hospital_Management_System.UI.Input;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.UI.Display;
+using Hospital_Management_System.Application.Management;
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Infrastructure.DataStructures;
 
@@ -8,10 +9,10 @@ namespace Hospital_Management_System.UI.Menus
 {
     public class DoctorMenu
     {
-        private DoctorRecord doctorRecord;
-        private PatientRecord patientRecord;
+        private DoctorManagement doctorRecord;
+        private PatientManagement patientRecord;
 
-        public DoctorMenu(DoctorRecord doctorRecord, PatientRecord patientRecord)
+        public DoctorMenu(DoctorManagement doctorRecord, PatientManagement patientRecord)
         {
             this.doctorRecord = doctorRecord;
             this.patientRecord = patientRecord;
@@ -42,7 +43,7 @@ namespace Hospital_Management_System.UI.Menus
                 Console.WriteLine("====================================");
                 Console.ResetColor();
 
-                Console.WriteLine("Current Fixed Staff Salary: " + Doctor.BaseStaffSalary);
+                Console.WriteLine("Current Fixed Staff Salary: " + StaffDoctor.BaseStaffSalary);
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
@@ -201,7 +202,7 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
-                doctorRecord.DisplayDoctor(doctor);
+                DoctorDisplay.DisplayDoctor(doctor);
 
                 Console.WriteLine("Choose field to update:");
                 Console.WriteLine("1. Doctor Name");
@@ -359,7 +360,7 @@ namespace Hospital_Management_System.UI.Menus
             decimal? salary = MenuInput.ReadValidDecimal("New Fixed Staff Salary: ");
             if (salary == null) return;
 
-            Doctor.BaseStaffSalary = salary.Value;
+            StaffDoctor.BaseStaffSalary = salary.Value;
             doctorRecord.RefreshAllDoctorSalaries();
 
             Console.WriteLine();
@@ -397,7 +398,7 @@ namespace Hospital_Management_System.UI.Menus
 
                         if (completedTwoYears)
                         {
-                            doctorRecord.DisplayDoctor(traineeDoctor);
+                            DoctorDisplay.DisplayDoctor(traineeDoctor);
                             found = true;
                         }
                     }
@@ -477,25 +478,25 @@ namespace Hospital_Management_System.UI.Menus
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
-                    doctorRecord.DisplayAllDoctors();
+                    DoctorDisplay.DisplayAllDoctors(doctorRecord.Doctors);
                     Console.WriteLine("Total Doctors: " + doctorRecord.GetDoctorsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
-                    doctorRecord.DisplayStaffDoctors();
+                    DoctorDisplay.DisplayStaffDoctors(doctorRecord.Doctors);
                     Console.WriteLine("Total Staff Doctors: " + doctorRecord.GetStaffDoctorsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
                 {
-                    doctorRecord.DisplayTraineeDoctors();
+                    DoctorDisplay.DisplayTraineeDoctors(doctorRecord.Doctors);
                     Console.WriteLine("Total Trainee Doctors: " + doctorRecord.GetTraineeDoctorsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D4 || key == ConsoleKey.NumPad4)
                 {
-                    doctorRecord.DisplayContractDoctors();
+                    DoctorDisplay.DisplayContractDoctors(doctorRecord.Doctors);
                     Console.WriteLine("Total Contract Doctors: " + doctorRecord.GetContractDoctorsCount());
                     MenuInput.Pause();
                 }
@@ -551,7 +552,7 @@ namespace Hospital_Management_System.UI.Menus
             }
             else
             {
-                doctorRecord.DisplayDoctor(doctor);
+                DoctorDisplay.DisplayDoctor(doctor);
             }
 
             MenuInput.Pause();
@@ -568,7 +569,7 @@ namespace Hospital_Management_System.UI.Menus
             LinkedList<Doctor> result = doctorRecord.SearchDoctorsByName(doctorName);
 
             Console.WriteLine();
-            doctorRecord.DisplayDoctorsList(result);
+            DoctorDisplay.DisplayDoctorsList(result);
             MenuInput.Pause();
         }
     }

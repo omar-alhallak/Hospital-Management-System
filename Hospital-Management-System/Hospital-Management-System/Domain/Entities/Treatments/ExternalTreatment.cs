@@ -3,7 +3,7 @@ using Hospital_Management_System.Domain.Entities.Doctors;
 
 namespace Hospital_Management_System.Domain.Entities.Treatments
 {
-    public class ExternalTreatment : Treatment
+    public class ExternalTreatment : Treatment // معالجة خارجية
     {
         private int clinicNumber;
         public int ClinicNumber

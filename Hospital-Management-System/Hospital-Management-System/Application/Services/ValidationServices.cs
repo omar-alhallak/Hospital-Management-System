@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Text.RegularExpressions;
+using Hospital_Management_System.Application.Management;
 using Hospital_Management_System.Domain.Entities.Doctors;
-using Hospital_Management_System.Application.Records;
 
-namespace Hospital_Management_System.Application.Helpers
+namespace Hospital_Management_System.Application.Services
 {
-    public static class Validation
+    public static class ValidationServices
     {
         public static bool IsValidEnglishText(string text)
         {
-            if (string.IsNullOrWhiteSpace(text))
-                return false;
+            if (string.IsNullOrWhiteSpace(text)) return false;
 
             return Regex.IsMatch(text, @"^[A-Za-z ]+$");
         }
@@ -47,23 +46,17 @@ namespace Hospital_Management_System.Application.Helpers
 
         public static bool IsValidTrainingDates(DateTime birthDate, DateTime startDate, DateTime? endDate)
         {
-            if (startDate > DateTime.Now)
-                return false;
+            if (startDate > DateTime.Now) return false;
 
-            if (birthDate >= startDate)
-                return false;
+            if (birthDate >= startDate) return false;
 
-            if (endDate == null)
-                return true;
+            if (endDate == null) return true;
 
-            if (birthDate >= endDate.Value)
-                return false;
+            if (birthDate >= endDate.Value) return false;
 
-            if (startDate > endDate.Value)
-                return false;
+            if (startDate > endDate.Value) return false;
 
-            if (endDate.Value > startDate.AddYears(2))
-                return false;
+            if (endDate.Value > startDate.AddYears(2)) return false;
 
             return true;
         }
@@ -73,28 +66,26 @@ namespace Hospital_Management_System.Application.Helpers
             return treatmentDate <= dischargeDate;
         }
 
-        public static bool IsUniqueDoctorId(DoctorRecord doctorRecord, int id)
+        public static bool IsUniqueDoctorId(DoctorManagement doctorRecord, int id)
         {
             return doctorRecord.FindDoctorById(id) == null;
         }
 
-        public static bool IsUniquePatientId(PatientRecord patientRecord, int id)
+        public static bool IsUniquePatientId(PatientManagement patientRecord, int id)
         {
             return patientRecord.FindPatientById(id) == null;
         }
 
-        public static bool IsUniqueTreatmentId(PatientRecord patientRecord, int id)
+        public static bool IsUniqueTreatmentId(PatientManagement patientRecord, int id)
         {
             return patientRecord.FindTreatmentById(id) == null;
         }
 
         public static bool IsTrainingExpired(TraineeDoctor doctor)
         {
-            if (doctor == null)
-                return false;
+            if (doctor == null) return false;
 
-            if (doctor.TrainingEndDate != null)
-                return false;
+            if (doctor.TrainingEndDate != null) return false;
 
             DateTime expiryDate = doctor.TrainingStartDate.AddYears(2);
 

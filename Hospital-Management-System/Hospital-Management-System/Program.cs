@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Hospital_Management_System.UI.Menus;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Application.Management;
 using Hospital_Management_System.Infrastructure.Files.Storage;
 
 namespace Hospital_Management_System.UI
@@ -12,8 +12,8 @@ namespace Hospital_Management_System.UI
         private static PatientJsonManager patientJsonManager;
         private static TreatmentJsonManager treatmentJsonManager;
 
-        private static DoctorRecord doctorRecord;
-        private static PatientRecord patientRecord;
+        private static DoctorManagement doctorRecord;
+        private static PatientManagement patientRecord;
 
         private static bool dataSaved = false;
 
@@ -41,7 +41,7 @@ namespace Hospital_Management_System.UI
             }
             catch
             {
-                doctorRecord = new DoctorRecord();
+                doctorRecord = new DoctorManagement();
             }
 
             doctorRecord.ResetContractDoctorsTreatmentCosts();
@@ -52,7 +52,7 @@ namespace Hospital_Management_System.UI
             }
             catch
             {
-                patientRecord = new PatientRecord();
+                patientRecord = new PatientManagement();
             }
 
             try
