@@ -1,7 +1,7 @@
-﻿using System;
-using System.Text;
-using Hospital_Management_System.Application.Helpers;
+﻿using Hospital_Management_System.Application.Helpers;
 using Hospital_Management_System.Application.Records;
+using System;
+using System.Text;
 
 namespace Hospital_Management_System.UI.Input
 {
@@ -57,7 +57,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsValidName(input))
                     return input;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid name. Use English letters and spaces only.");
+                Console.ResetColor();
             }
         }
 
@@ -73,7 +75,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsValidAddress(input))
                     return input;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid address. Use English letters and spaces only.");
+                Console.ResetColor();
             }
         }
 
@@ -89,7 +93,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsValidName(input))
                     return input;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid search text. Use English letters and spaces only.");
+                Console.ResetColor();
             }
         }
 
@@ -106,7 +112,9 @@ namespace Hospital_Management_System.UI.Input
                 if (int.TryParse(input, out value) && Validation.IsPositiveInt(value))
                     return value;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid input. Please enter a positive integer.");
+                Console.ResetColor();
             }
         }
 
@@ -123,7 +131,9 @@ namespace Hospital_Management_System.UI.Input
                 if (decimal.TryParse(input, out value) && Validation.IsPositiveDecimal(value))
                     return value;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid input. Please enter a valid positive number.");
+                Console.ResetColor();
             }
         }
 
@@ -140,7 +150,9 @@ namespace Hospital_Management_System.UI.Input
                 if (DateTime.TryParse(input, out value))
                     return value;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid date. Please enter a valid date.");
+                Console.ResetColor();
             }
         }
 
@@ -156,24 +168,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsValidBirthDate(date.Value))
                     return date;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid birth date. It must be before today.");
-            }
-        }
-
-        public static bool? ReadValidBool(string label)
-        {
-            while (true)
-            {
-                string input = ReadField(label);
-
-                if (input == null)
-                    return null;
-
-                bool value;
-                if (bool.TryParse(input, out value))
-                    return value;
-
-                Console.WriteLine("Invalid input. Please enter true or false.");
+                Console.ResetColor();
             }
         }
 
@@ -189,7 +186,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsUniqueDoctorId(doctorRecord, id.Value))
                     return id;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Doctor ID already exists. Please enter another ID.");
+                Console.ResetColor();
             }
         }
 
@@ -205,7 +204,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsUniquePatientId(patientRecord, id.Value))
                     return id;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Patient ID already exists. Please enter another ID.");
+                Console.ResetColor();
             }
         }
 
@@ -221,7 +222,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsUniqueTreatmentId(patientRecord, id.Value))
                     return id;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Treatment ID already exists. Please enter another ID.");
+                Console.ResetColor();
             }
         }
 
@@ -237,7 +240,9 @@ namespace Hospital_Management_System.UI.Input
                 if (Validation.IsValidHireDate(birthDate, date.Value))
                     return date;
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid hire date. It must be after birth date and not in the future.");
+                Console.ResetColor();
             }
         }
 
@@ -255,13 +260,17 @@ namespace Hospital_Management_System.UI.Input
 
                 if (start.Value <= birthDate)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid training start date. It must be after birth date.");
+                    Console.ResetColor();
                     continue;
                 }
 
                 if (start.Value > DateTime.Now)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid training start date. It cannot be in the future.");
+                    Console.ResetColor();
                     continue;
                 }
 
@@ -271,10 +280,16 @@ namespace Hospital_Management_System.UI.Input
 
             while (true)
             {
-                Console.Write("Training End Date (press C if not finished yet): ");
-                string endInput = Console.ReadLine();
+                string endInput = ReadField("Training End Date (press N if not finished yet): ");
 
-                if (string.Equals(endInput, "C", StringComparison.OrdinalIgnoreCase))
+                if (endInput == null)
+                {
+                    endDate = null;
+                    startDate = DateTime.MinValue;
+                    return;
+                }
+
+                if (string.Equals(endInput, "N", StringComparison.OrdinalIgnoreCase))
                 {
                     endDate = null;
                     return;
@@ -283,25 +298,41 @@ namespace Hospital_Management_System.UI.Input
                 DateTime parsedEnd;
                 if (!DateTime.TryParse(endInput, out parsedEnd))
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid end date.");
+                    Console.ResetColor();
                     continue;
                 }
 
                 if (parsedEnd <= birthDate)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid training end date. It must be after birth date.");
+                    Console.ResetColor();
                     continue;
                 }
 
                 if (parsedEnd < startDate)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Invalid training end date. It must be after or equal to training start date.");
+                    Console.ResetColor();
                     continue;
                 }
 
-                if (parsedEnd > startDate.AddYears(2))
+                if (parsedEnd < startDate.AddYears(2))
                 {
-                    Console.WriteLine("Invalid training end date. Training period cannot exceed two years.");
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid training end date. It must be at least two years after training start date.");
+                    Console.ResetColor();
+                    continue;
+                }
+
+                if (parsedEnd > DateTime.Now)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Invalid training end date. It cannot be in the future.");
+                    Console.ResetColor();
                     continue;
                 }
 
@@ -337,8 +368,36 @@ namespace Hospital_Management_System.UI.Input
                     return;
                 }
 
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid dates. Treatment date must be before or equal to discharge date.");
+                Console.ResetColor();
             }
+        }
+
+        public static bool? ReadStatusChoice(string option1, string option2)
+        {
+            Console.WriteLine();
+            Console.WriteLine("1 - " + option1);
+            Console.WriteLine("2 - " + option2);
+            Console.Write("Choose option 1 OR 2: ");
+
+            ConsoleKey key = Console.ReadKey(true).Key;           
+
+            if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+            {
+                Console.WriteLine(option1);
+                return true;
+            }
+
+            if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+            {
+                Console.WriteLine(option2);
+                return false;
+            }
+
+            Console.WriteLine();
+            Console.WriteLine("Invalid choice. Choose 1 OR 2");
+            return null;
         }
 
         public static void Pause()

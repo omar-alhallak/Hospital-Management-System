@@ -1,5 +1,4 @@
 ﻿using System;
-using Hospital_Management_System.Domain.Settings;
 
 namespace Hospital_Management_System.Domain.Entities.Doctors
 {
@@ -12,18 +11,18 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             set { trainingStartDate = value; }
         }
 
-        private decimal salary;
-        public decimal Salary
-        {
-            get { return salary; }
-            set { salary = value; }
-        }
-
         private DateTime? trainingEndDate;
         public DateTime? TrainingEndDate
         {
             get { return trainingEndDate; }
             set { trainingEndDate = value; }
+        }
+
+        private decimal salary;
+        public decimal Salary
+        {
+            get { return salary; }
+            set { salary = value; }
         }
 
         public TraineeDoctor() : base() { }
@@ -33,7 +32,7 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
         {
             this.trainingStartDate = trainingStartDate;
             this.trainingEndDate = trainingEndDate;
-            salary = 0;
+            this.salary = 0;
             CalculateSalary();
         }
 
@@ -44,13 +43,13 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             int years = referenceDate.Year - trainingStartDate.Year;
 
             if (referenceDate.Month < trainingStartDate.Month ||
-               (referenceDate.Month == trainingStartDate.Month && referenceDate.Day < trainingStartDate.Day)) 
+               (referenceDate.Month == trainingStartDate.Month && referenceDate.Day < trainingStartDate.Day))
             { years--; }
 
             if (years < 1)
-                salary = SalarySettings.BaseStaffSalary * 0.5m;
+                salary = Doctor.BaseStaffSalary * 0.5m;
             else
-                salary = SalarySettings.BaseStaffSalary * 0.75m;
+                salary = Doctor.BaseStaffSalary * 0.75m;
 
             return salary;
         }

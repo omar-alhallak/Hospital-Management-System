@@ -37,6 +37,16 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             CalculateSalary();
         }
 
+        public void RemoveTreatmentCost(decimal cost)
+        {
+            totalTreatmentCost -= cost;
+
+            if (totalTreatmentCost < 0)
+                totalTreatmentCost = 0;
+
+            CalculateSalary();
+        }
+
         public override decimal CalculateSalary()
         {
             salary = totalTreatmentCost * 0.5m;

@@ -96,9 +96,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domain\Entities\Treatments\ExternalTreatment.cs" />
     <Compile Include="Domain\Entities\Treatments\InternalTreatment.cs" />
-    <Compile Include="Infrastructure\Files\Data\SalarySettingsData.cs" />
-    <Compile Include="Domain\Settings\SalarySettings.cs" />
-    <Compile Include="Infrastructure\Files\Storage\SalarySettingsJsonManager.cs" />
     <Compile Include="Application\Services\SearchService.cs" />
     <Compile Include="Infrastructure\Files\Data\TreatmentData.cs" />
     <Compile Include="Infrastructure\Files\Storage\TreatmentJsonManager.cs" />

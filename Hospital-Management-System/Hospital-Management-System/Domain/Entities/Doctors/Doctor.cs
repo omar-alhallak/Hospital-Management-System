@@ -32,6 +32,8 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             set { birthDate = value; }
         }
 
+        public static decimal BaseStaffSalary { get; set; } = 1000m;
+
         public Doctor() { }
 
         public Doctor(int doctorId, string doctorName, string address, DateTime birthDate)

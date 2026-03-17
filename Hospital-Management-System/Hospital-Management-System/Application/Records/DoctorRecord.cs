@@ -162,6 +162,23 @@ namespace Hospital_Management_System.Application.Records
             }
         }
 
+        public void ResetContractDoctorsTreatmentCosts()
+        {
+            Node<Doctor> current = doctors.Head;
+
+            while (current != null)
+            {
+                if (current.Data is ContractDoctor)
+                {
+                    ContractDoctor contractDoctor = (ContractDoctor)current.Data;
+                    contractDoctor.TotalTreatmentCost = 0;
+                    contractDoctor.CalculateSalary();
+                }
+
+                current = current.Next;
+            }
+        }
+
         public int GetDoctorsCount()
         {
             int count = 0;

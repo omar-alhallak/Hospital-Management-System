@@ -6,8 +6,8 @@ namespace Hospital_Management_System.Domain.Entities.Treatments
 {
     public class InternalTreatment : Treatment
     {
-        private DateTime dischargeDate;
-        public DateTime DischargeDate
+        private DateTime? dischargeDate;
+        public DateTime? DischargeDate
         {
             get { return dischargeDate; }
             set { dischargeDate = value; }
@@ -32,7 +32,7 @@ namespace Hospital_Management_System.Domain.Entities.Treatments
             supervisors = new LinkedList<Doctor>();
         }
 
-        public InternalTreatment(int treatmentId, int patientId, DateTime treatmentDate, decimal cost, DateTime dischargeDate, int departmentId)
+        public InternalTreatment(int treatmentId, int patientId, DateTime treatmentDate, decimal cost, DateTime? dischargeDate, int departmentId)
             : base(treatmentId, patientId, treatmentDate, cost)
         {
             this.dischargeDate = dischargeDate;

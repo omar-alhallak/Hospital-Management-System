@@ -1,6 +1,5 @@
 ﻿using System;
 using Hospital_Management_System.UI.Input;
-using Hospital_Management_System.Domain.Settings;
 using Hospital_Management_System.Application.Records;
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Infrastructure.DataStructures;
@@ -10,10 +9,12 @@ namespace Hospital_Management_System.UI.Menus
     public class DoctorMenu
     {
         private DoctorRecord doctorRecord;
+        private PatientRecord patientRecord;
 
-        public DoctorMenu(DoctorRecord doctorRecord)
+        public DoctorMenu(DoctorRecord doctorRecord, PatientRecord patientRecord)
         {
             this.doctorRecord = doctorRecord;
+            this.patientRecord = patientRecord;
         }
 
         public void Show()
@@ -21,9 +22,13 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
                 Console.WriteLine("        Doctors Management");
                 Console.WriteLine("====================================");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Add Doctor");
                 Console.WriteLine("2. Update Doctor");
                 Console.WriteLine("3. Delete Doctor");
@@ -32,9 +37,16 @@ namespace Hospital_Management_System.UI.Menus
                 Console.WriteLine("6. Display");
                 Console.WriteLine("7. Search");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
-                Console.WriteLine("Current Fixed Staff Salary: " + SalarySettings.BaseStaffSalary);
+                Console.ResetColor();
+
+                Console.WriteLine("Current Fixed Staff Salary: " + Doctor.BaseStaffSalary);
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -60,80 +72,111 @@ namespace Hospital_Management_System.UI.Menus
 
         private void AddDoctor()
         {
-            Console.Clear();
-            Console.WriteLine("1. Staff Doctor");
-            Console.WriteLine("2. Trainee Doctor");
-            Console.WriteLine("3. Contract Doctor");
-            MenuInput.ShowBackMessage();
-
-            ConsoleKey key = MenuInput.ReadMenuKey();
-
-            if (key == ConsoleKey.Backspace)
-                return;
-
-            int? doctorId = MenuInput.ReadUniqueDoctorId("Doctor ID: ", doctorRecord);
-            if (doctorId == null) return;
-
-            string doctorName = MenuInput.ReadValidName("Doctor Name: ");
-            if (doctorName == null) return;
-
-            string address = MenuInput.ReadValidAddress("Address: ");
-            if (address == null) return;
-
-            DateTime? birthDate = MenuInput.ReadValidBirthDate("Birth Date: ");
-            if (birthDate == null) return;
-
-            if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+            while (true)
             {
-                DateTime? hireDate = MenuInput.ReadValidHireDate("Hire Date: ", birthDate.Value);
-                if (hireDate == null) return;
+                Console.Clear();
 
-                StaffDoctor doctor = new StaffDoctor(
-                    doctorId.Value,
-                    doctorName,
-                    address,
-                    birthDate.Value,
-                    hireDate.Value
-                );
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("=========== Add Doctor ===========");
+                Console.ResetColor();
 
-                doctorRecord.AddDoctor(doctor);
-            }
-            else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
-            {
-                DateTime trainingStartDate;
-                DateTime? trainingEndDate;
+                Console.WriteLine("1. Staff Doctor");
+                Console.WriteLine("2. Trainee Doctor");
+                Console.WriteLine("3. Contract Doctor");
+                Console.WriteLine("Backspace. Go Back");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("==================================");
+                Console.ResetColor();
 
-                MenuInput.ReadValidTrainingDates(birthDate.Value, out trainingStartDate, out trainingEndDate);
+                ConsoleKey key = MenuInput.ReadMenuKey();
 
-                if (trainingStartDate == DateTime.MinValue)
+                if (key == ConsoleKey.Backspace)
                     return;
 
-                TraineeDoctor doctor = new TraineeDoctor(
-                    doctorId.Value,
-                    doctorName,
-                    address,
-                    birthDate.Value,
-                    trainingStartDate,
-                    trainingEndDate
-                );
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
 
-                doctorRecord.AddDoctor(doctor);
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                    Console.WriteLine("Adding: Staff Doctor");
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+                    Console.WriteLine("Adding: Trainee Doctor");
+                else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
+                    Console.WriteLine("Adding: Contract Doctor");
+                else
+                {
+                    Console.ResetColor();
+                    continue;
+                }
+
+                Console.ResetColor();
+                Console.WriteLine();
+
+                int? doctorId = MenuInput.ReadUniqueDoctorId("Doctor ID: ", doctorRecord);
+                if (doctorId == null) continue;
+
+                string doctorName = MenuInput.ReadValidName("Doctor Name: ");
+                if (doctorName == null) continue;
+
+                string address = MenuInput.ReadValidAddress("Address: ");
+                if (address == null) continue;
+
+                DateTime? birthDate = MenuInput.ReadValidBirthDate("Birth Date: ");
+                if (birthDate == null) continue;
+
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                {
+                    DateTime? hireDate = MenuInput.ReadValidHireDate("Hire Date: ", birthDate.Value);
+                    if (hireDate == null) continue;
+
+                    StaffDoctor doctor = new StaffDoctor(
+                        doctorId.Value,
+                        doctorName,
+                        address,
+                        birthDate.Value,
+                        hireDate.Value
+                    );
+
+                    doctorRecord.AddDoctor(doctor);
+                }
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+                {
+                    DateTime start;
+                    DateTime? end;
+
+                    MenuInput.ReadValidTrainingDates(birthDate.Value, out start, out end);
+
+                    if (start == DateTime.MinValue)
+                        continue;
+
+                    TraineeDoctor doctor = new TraineeDoctor(
+                        doctorId.Value,
+                        doctorName,
+                        address,
+                        birthDate.Value,
+                        start,
+                        end
+                    );
+
+                    doctorRecord.AddDoctor(doctor);
+                }
+                else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
+                {
+                    ContractDoctor doctor = new ContractDoctor(
+                        doctorId.Value,
+                        doctorName,
+                        address,
+                        birthDate.Value
+                    );
+
+                    doctorRecord.AddDoctor(doctor);
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Doctor added successfully.");
+                Console.ResetColor();
+
+                MenuInput.Pause();
             }
-            else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
-            {
-                ContractDoctor doctor = new ContractDoctor(
-                    doctorId.Value,
-                    doctorName,
-                    address,
-                    birthDate.Value
-                );
-
-                doctorRecord.AddDoctor(doctor);
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("Doctor added successfully.");
-            MenuInput.Pause();
         }
 
         private void UpdateDoctor()
@@ -148,7 +191,9 @@ namespace Hospital_Management_System.UI.Menus
 
             if (doctor == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Doctor not found.");
+                Console.ResetColor();
                 MenuInput.Pause();
                 return;
             }
@@ -172,37 +217,58 @@ namespace Hospital_Management_System.UI.Menus
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Updating: Doctor Name");
+                    Console.ResetColor();
+                    Console.WriteLine();
+
                     string doctorName = MenuInput.ReadValidName("New Doctor Name: ");
-                    if (doctorName == null) continue;
+                    if (doctorName == null)
+                        continue;
 
                     doctorRecord.UpdateDoctorName(doctorId.Value, doctorName);
                     doctor = doctorRecord.FindDoctorById(doctorId.Value);
 
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Doctor name updated successfully.");
+                    Console.ResetColor();
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Updating: Address");
+                    Console.ResetColor();
+                    Console.WriteLine();
+
                     string address = MenuInput.ReadValidAddress("New Address: ");
-                    if (address == null) continue;
+                    if (address == null)
+                        continue;
 
                     doctorRecord.UpdateDoctorAddress(doctorId.Value, address);
                     doctor = doctorRecord.FindDoctorById(doctorId.Value);
 
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Doctor address updated successfully.");
+                    Console.ResetColor();
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Updating: Birth Date");
+                    Console.ResetColor();
+                    Console.WriteLine();
 
                     while (true)
                     {
                         DateTime? birthDate = MenuInput.ReadValidBirthDate("New Birth Date: ");
-                        if (birthDate == null) break;
+                        if (birthDate == null)
+                            break;
 
                         bool valid = false;
 
@@ -223,7 +289,16 @@ namespace Hospital_Management_System.UI.Menus
 
                         if (!valid)
                         {
-                            Console.WriteLine("Invalid birth date. It must be before hire date or training start date.");
+                            Console.ForegroundColor = ConsoleColor.Red;
+
+                            if (doctor is StaffDoctor)
+                                Console.WriteLine("Invalid birth date. It must be before hire date.");
+                            else if (doctor is TraineeDoctor)
+                                Console.WriteLine("Invalid birth date. It must be before training start date.");
+                            else
+                                Console.WriteLine("Invalid birth date. It must be before today.");
+
+                            Console.ResetColor();
                             continue;
                         }
 
@@ -231,7 +306,9 @@ namespace Hospital_Management_System.UI.Menus
                         doctor = doctorRecord.FindDoctorById(doctorId.Value);
 
                         Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Doctor birth date updated successfully.");
+                        Console.ResetColor();
                         MenuInput.Pause();
                         break;
                     }
@@ -249,7 +326,18 @@ namespace Hospital_Management_System.UI.Menus
 
             if (doctorRecord.FindDoctorById(doctorId.Value) == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Doctor not found.");
+                Console.ResetColor();
+                MenuInput.Pause();
+                return;
+            }
+
+            if (patientRecord.HasDoctorTreatments(doctorId.Value))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Cannot delete doctor because treatments exist.");
+                Console.ResetColor();
                 MenuInput.Pause();
                 return;
             }
@@ -257,7 +345,9 @@ namespace Hospital_Management_System.UI.Menus
             doctorRecord.DeleteDoctor(doctorId.Value);
 
             Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Doctor deleted successfully.");
+            Console.ResetColor();
             MenuInput.Pause();
         }
 
@@ -269,38 +359,94 @@ namespace Hospital_Management_System.UI.Menus
             decimal? salary = MenuInput.ReadValidDecimal("New Fixed Staff Salary: ");
             if (salary == null) return;
 
-            SalarySettings.BaseStaffSalary = salary.Value;
+            Doctor.BaseStaffSalary = salary.Value;
             doctorRecord.RefreshAllDoctorSalaries();
 
             Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Fixed staff salary updated successfully.");
             Console.WriteLine("All salaries are now updated automatically.");
+            Console.ResetColor();
             MenuInput.Pause();
         }
 
         private void PromoteTraineeDoctor()
         {
-            Console.Clear();
-
-            MenuInput.ShowBackMessage();
-
-            int? doctorId = MenuInput.ReadValidInt("Trainee Doctor ID: ");
-            if (doctorId == null) return;
-
-            Doctor doctor = doctorRecord.FindDoctorById(doctorId.Value);
-
-            if (!(doctor is TraineeDoctor))
+            while (true)
             {
-                Console.WriteLine("Trainee doctor not found.");
+                Console.Clear();
+                MenuInput.ShowBackMessage();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("===== Trainee Doctors Available For Promotion =====");
+                Console.ResetColor();
+
+                bool found = false;
+                Node<Doctor> current = doctorRecord.Doctors.Head;
+
+                while (current != null)
+                {
+                    if (current.Data is TraineeDoctor)
+                    {
+                        TraineeDoctor traineeDoctor = (TraineeDoctor)current.Data;
+
+                        bool completedTwoYears = false;
+
+                        if (traineeDoctor.TrainingStartDate.AddYears(2) <= DateTime.Now)
+                            completedTwoYears = true;
+
+                        if (completedTwoYears)
+                        {
+                            doctorRecord.DisplayDoctor(traineeDoctor);
+                            found = true;
+                        }
+                    }
+
+                    current = current.Next;
+                }
+
+                if (!found)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No trainee doctors are eligible for promotion.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    return;
+                }
+
+                int? doctorId = MenuInput.ReadValidInt("Trainee Doctor ID: ");
+                if (doctorId == null) return;
+
+                Doctor doctor = doctorRecord.FindDoctorById(doctorId.Value);
+
+                if (!(doctor is TraineeDoctor))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Trainee doctor not found.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                TraineeDoctor trainee = (TraineeDoctor)doctor;
+
+                if (trainee.TrainingStartDate.AddYears(2) > DateTime.Now)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Cannot promote doctor before completing two full years of training.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                doctorRecord.PromoteTraineeDoctor(doctorId.Value);
+
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Doctor promoted successfully.");
+                Console.ResetColor();
                 MenuInput.Pause();
-                return;
             }
-
-            doctorRecord.PromoteTraineeDoctor(doctorId.Value);
-
-            Console.WriteLine();
-            Console.WriteLine("Doctor promoted successfully.");
-            MenuInput.Pause();
         }
 
         private void DisplayDoctorMenu()
@@ -308,13 +454,19 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========== Display Doctors ===========");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Display All Doctors");
                 Console.WriteLine("2. Display Staff Doctors");
                 Console.WriteLine("3. Display Trainee Doctors");
                 Console.WriteLine("4. Display Contract Doctors");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=======================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -355,11 +507,17 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========== Doctor Search ===========");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Search By ID");
                 Console.WriteLine("2. Search By Name");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=====================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -386,9 +544,15 @@ namespace Hospital_Management_System.UI.Menus
             Console.WriteLine();
 
             if (doctor == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Doctor not found.");
+                Console.ResetColor();
+            }
             else
+            {
                 doctorRecord.DisplayDoctor(doctor);
+            }
 
             MenuInput.Pause();
         }

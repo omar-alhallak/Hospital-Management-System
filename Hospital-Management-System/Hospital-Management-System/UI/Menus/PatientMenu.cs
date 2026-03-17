@@ -1,8 +1,8 @@
 ﻿using System;
 using Hospital_Management_System.UI.Input;
-using Hospital_Management_System.Infrastructure.DataStructures;
-using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.Domain.Entities.Patients;
+using Hospital_Management_System.Infrastructure.DataStructures;
 
 namespace Hospital_Management_System.UI.Menus
 {
@@ -20,17 +20,25 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
                 Console.WriteLine("        Patients Management");
                 Console.WriteLine("====================================");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Add Patient");
                 Console.WriteLine("2. Update Patient");
-                Console.WriteLine("3. Discharge Internal Patient");
-                Console.WriteLine("4. Accept External Patient");
-                Console.WriteLine("5. Display");
-                Console.WriteLine("6. Search");
+                Console.WriteLine("3. Delete Patient");
+                Console.WriteLine("4. Discharge Internal Patient");
+                Console.WriteLine("5. Accept External Patient");
+                Console.WriteLine("6. Display");
+                Console.WriteLine("7. Search");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -42,74 +50,107 @@ namespace Hospital_Management_System.UI.Menus
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                     UpdatePatient();
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
-                    DischargeInternalPatient();
+                    DeletePatient();
                 else if (key == ConsoleKey.D4 || key == ConsoleKey.NumPad4)
-                    AcceptExternalPatient();
+                    DischargePatient();
                 else if (key == ConsoleKey.D5 || key == ConsoleKey.NumPad5)
-                    DisplayPatientMenu();
+                    AcceptPatient();
                 else if (key == ConsoleKey.D6 || key == ConsoleKey.NumPad6)
-                    SearchPatientMenu();
+                    DisplayMenu();
+                else if (key == ConsoleKey.D7 || key == ConsoleKey.NumPad7)
+                    SearchMenu();
             }
         }
 
         private void AddPatient()
         {
-            Console.Clear();
-            Console.WriteLine("1. Internal Patient");
-            Console.WriteLine("2. External Patient");
-            MenuInput.ShowBackMessage();
-
-            ConsoleKey key = MenuInput.ReadMenuKey();
-
-            if (key == ConsoleKey.Backspace)
-                return;
-
-            int? patientId = MenuInput.ReadUniquePatientId("Patient ID: ", patientRecord);
-            if (patientId == null) return;
-
-            string patientName = MenuInput.ReadValidName("Patient Name: ");
-            if (patientName == null) return;
-
-            string address = MenuInput.ReadValidAddress("Address: ");
-            if (address == null) return;
-
-            DateTime? birthDate = MenuInput.ReadValidBirthDate("Birth Date: ");
-            if (birthDate == null) return;
-
-            if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+            while (true)
             {
-                bool? isDischarged = MenuInput.ReadValidBool("Is Discharged (true/false): ");
-                if (isDischarged == null) return;
+                Console.Clear();
 
-                InternalPatient patient = new InternalPatient(
-                    patientId.Value,
-                    patientName,
-                    address,
-                    birthDate.Value,
-                    isDischarged.Value
-                );
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("=========== Add Patient ===========");
+                Console.ResetColor();
 
-                patientRecord.AddPatient(patient);
+                Console.WriteLine("1. Internal Patient");
+                Console.WriteLine("2. External Patient");
+                Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("===================================");
+                Console.ResetColor();
+
+                ConsoleKey key = MenuInput.ReadMenuKey();
+
+                if (key == ConsoleKey.Backspace)
+                    return;
+
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                    Console.WriteLine("Adding Internal Patient");
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+                    Console.WriteLine("Adding External Patient");
+                else
+                {
+                    Console.ResetColor();
+                    continue;
+                }
+
+                Console.ResetColor();
+                Console.WriteLine();
+
+                int? id = MenuInput.ReadUniquePatientId("Patient ID: ", patientRecord);
+                if (id == null) continue;
+
+                string name = MenuInput.ReadValidName("Patient Name: ");
+                if (name == null) continue;
+
+                string address = MenuInput.ReadValidAddress("Address: ");
+                if (address == null) continue;
+
+                DateTime? birth = MenuInput.ReadValidBirthDate("Birth Date: ");
+                if (birth == null) continue;
+
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                {
+                    bool? discharged = MenuInput.ReadStatusChoice("Discharged", "Not Discharged");
+                    if (discharged == null) continue;
+
+                    InternalPatient patient = new InternalPatient(
+                        id.Value,
+                        name,
+                        address,
+                        birth.Value,
+                        discharged.Value
+                    );
+
+                    patientRecord.AddPatient(patient);
+                }
+                else
+                {
+                    bool? accepted = MenuInput.ReadStatusChoice("Accepted", "Not Accepted");
+                    if (accepted == null) continue;
+
+                    ExternalPatient patient = new ExternalPatient(
+                        id.Value,
+                        name,
+                        address,
+                        birth.Value,
+                        accepted.Value
+                    );
+
+                    patientRecord.AddPatient(patient);
+                }
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Patient added successfully.");
+                Console.ResetColor();
+
+                MenuInput.Pause();
+                continue;
             }
-            else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
-            {
-                bool? isAccepted = MenuInput.ReadValidBool("Is Accepted (true/false): ");
-                if (isAccepted == null) return;
-
-                ExternalPatient patient = new ExternalPatient(
-                    patientId.Value,
-                    patientName,
-                    address,
-                    birthDate.Value,
-                    isAccepted.Value
-                );
-
-                patientRecord.AddPatient(patient);
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("Patient added successfully.");
-            MenuInput.Pause();
         }
 
         private void UpdatePatient()
@@ -124,7 +165,9 @@ namespace Hospital_Management_System.UI.Menus
 
             if (patient == null)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Patient not found.");
+                Console.ResetColor();
                 MenuInput.Pause();
                 return;
             }
@@ -148,101 +191,281 @@ namespace Hospital_Management_System.UI.Menus
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Updating: Patient Name");
+                    Console.ResetColor();
+                    Console.WriteLine();
+
                     string patientName = MenuInput.ReadValidName("New Patient Name: ");
-                    if (patientName == null) continue;
+                    if (patientName == null)
+                        continue;
 
                     patientRecord.UpdatePatientName(patientId.Value, patientName);
                     patient = patientRecord.FindPatientById(patientId.Value);
 
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Patient name updated successfully.");
+                    Console.ResetColor();
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Updating: Address");
+                    Console.ResetColor();
+                    Console.WriteLine();
+
                     string address = MenuInput.ReadValidAddress("New Address: ");
-                    if (address == null) continue;
+                    if (address == null)
+                        continue;
 
                     patientRecord.UpdatePatientAddress(patientId.Value, address);
                     patient = patientRecord.FindPatientById(patientId.Value);
 
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Patient address updated successfully.");
+                    Console.ResetColor();
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
                 {
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Updating: Birth Date");
+                    Console.ResetColor();
+                    Console.WriteLine();
 
                     DateTime? birthDate = MenuInput.ReadValidBirthDate("New Birth Date: ");
-                    if (birthDate == null) continue;
+                    if (birthDate == null)
+                        continue;
 
                     patientRecord.UpdatePatientBirthDate(patientId.Value, birthDate.Value);
                     patient = patientRecord.FindPatientById(patientId.Value);
 
                     Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Patient birth date updated successfully.");
+                    Console.ResetColor();
                     MenuInput.Pause();
                 }
             }
         }
 
-        private void DischargeInternalPatient()
+        private void DeletePatient()
         {
             Console.Clear();
             MenuInput.ShowBackMessage();
 
-            int? patientId = MenuInput.ReadValidInt("Internal Patient ID: ");
-            if (patientId == null) return;
+            int? id = MenuInput.ReadValidInt("Patient ID to delete: ");
+            if (id == null) return;
 
-            if (!(patientRecord.FindPatientById(patientId.Value) is InternalPatient))
+            Patient patient = patientRecord.FindPatientById(id.Value);
+
+            if (patient == null)
             {
-                Console.WriteLine("Internal patient not found.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Patient not found.");
+                Console.ResetColor();
                 MenuInput.Pause();
                 return;
             }
 
-            patientRecord.DischargePatient(patientId.Value);
-
-            Console.WriteLine();
-            Console.WriteLine("Patient discharged successfully.");
-            MenuInput.Pause();
-        }
-
-        private void AcceptExternalPatient()
-        {
-            Console.Clear();
-            MenuInput.ShowBackMessage();
-
-            int? patientId = MenuInput.ReadValidInt("External Patient ID: ");
-            if (patientId == null) return;
-
-            if (!(patientRecord.FindPatientById(patientId.Value) is ExternalPatient))
+            if (patientRecord.HasTreatments(id.Value))
             {
-                Console.WriteLine("External patient not found.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Cannot delete patient because treatments exist.");
+                Console.ResetColor();
                 MenuInput.Pause();
                 return;
             }
 
-            patientRecord.AcceptExternalPatient(patientId.Value);
+            bool deleted = patientRecord.DeletePatient(id.Value);
 
-            Console.WriteLine();
-            Console.WriteLine("Patient accepted successfully.");
+            if (deleted)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Patient deleted successfully.");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Delete failed.");
+                Console.ResetColor();
+            }
+
             MenuInput.Pause();
         }
 
-        private void DisplayPatientMenu()
+        private void DischargePatient()
         {
             while (true)
             {
                 Console.Clear();
+                MenuInput.ShowBackMessage();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("===== Internal Patients Available For Discharge =====");
+                Console.ResetColor();
+
+                bool found = false;
+                Node<Patient> current = patientRecord.Patients.Head;
+
+                while (current != null)
+                {
+                    if (current.Data is InternalPatient)
+                    {
+                        InternalPatient internalPatient = (InternalPatient)current.Data;
+
+                        if (!internalPatient.IsDischarged)
+                        {
+                            patientRecord.DisplayPatient(internalPatient);
+                            found = true;
+                        }
+                    }
+
+                    current = current.Next;
+                }
+
+                if (!found)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No internal patients are available for discharge.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    return;
+                }
+
+                int? id = MenuInput.ReadValidInt("Internal Patient ID: ");
+                if (id == null) return;
+
+                Patient patient = patientRecord.FindPatientById(id.Value);
+
+                if (!(patient is InternalPatient))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Internal patient not found.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                InternalPatient internalPatientToDischarge = (InternalPatient)patient;
+
+                if (internalPatientToDischarge.IsDischarged)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Already discharged.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                patientRecord.DischargePatient(id.Value);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Patient discharged.");
+                Console.ResetColor();
+
+                MenuInput.Pause();
+            }
+        }
+
+        private void AcceptPatient()
+        {
+            while (true)
+            {
+                Console.Clear();
+                MenuInput.ShowBackMessage();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("===== External Patients Available For Acceptance =====");
+                Console.ResetColor();
+
+                bool found = false;
+                Node<Patient> current = patientRecord.Patients.Head;
+
+                while (current != null)
+                {
+                    if (current.Data is ExternalPatient)
+                    {
+                        ExternalPatient externalPatient = (ExternalPatient)current.Data;
+
+                        if (!externalPatient.IsAccepted)
+                        {
+                            patientRecord.DisplayPatient(externalPatient);
+                            found = true;
+                        }
+                    }
+
+                    current = current.Next;
+                }
+
+                if (!found)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("No external patients are available for acceptance.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    return;
+                }
+
+                int? id = MenuInput.ReadValidInt("External Patient ID: ");
+                if (id == null) return;
+
+                Patient patient = patientRecord.FindPatientById(id.Value);
+
+                if (!(patient is ExternalPatient))
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("External patient not found.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                ExternalPatient externalPatientToAccept = (ExternalPatient)patient;
+
+                if (externalPatientToAccept.IsAccepted)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Already accepted.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                patientRecord.AcceptExternalPatient(id.Value);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Patient accepted.");
+                Console.ResetColor();
+
+                MenuInput.Pause();
+            }
+        }
+
+        private void DisplayMenu()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========== Display Patients ===========");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Display All Patients");
                 Console.WriteLine("2. Display Internal Patients");
                 Console.WriteLine("3. Display External Patients");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("========================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -272,16 +495,23 @@ namespace Hospital_Management_System.UI.Menus
             }
         }
 
-        private void SearchPatientMenu()
+        private void SearchMenu()
         {
             while (true)
             {
                 Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========== Patient Search ===========");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Search By ID");
                 Console.WriteLine("2. Search By Name");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("======================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -300,17 +530,23 @@ namespace Hospital_Management_System.UI.Menus
             Console.Clear();
             MenuInput.ShowBackMessage();
 
-            int? patientId = MenuInput.ReadValidInt("Patient ID: ");
-            if (patientId == null) return;
+            int? id = MenuInput.ReadValidInt("Patient ID: ");
+            if (id == null) return;
 
-            Patient patient = patientRecord.FindPatientById(patientId.Value);
+            Patient patient = patientRecord.FindPatientById(id.Value);
 
             Console.WriteLine();
 
             if (patient == null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Patient not found.");
+                Console.ResetColor();
+            }
             else
+            {
                 patientRecord.DisplayPatient(patient);
+            }
 
             MenuInput.Pause();
         }
@@ -320,10 +556,10 @@ namespace Hospital_Management_System.UI.Menus
             Console.Clear();
             MenuInput.ShowBackMessage();
 
-            string patientName = MenuInput.ReadSearchText("Patient Name: ");
-            if (patientName == null) return;
+            string name = MenuInput.ReadSearchText("Patient Name: ");
+            if (name == null) return;
 
-            LinkedList<Patient> result = patientRecord.SearchPatientsByName(patientName);
+            LinkedList<Patient> result = patientRecord.SearchPatientsByName(name);
 
             Console.WriteLine();
             patientRecord.DisplayPatientsList(result);

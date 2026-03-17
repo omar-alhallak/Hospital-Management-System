@@ -1,5 +1,4 @@
 ﻿using System;
-using Hospital_Management_System.Domain.Settings;
 
 namespace Hospital_Management_System.Domain.Entities.Doctors
 {
@@ -25,13 +24,13 @@ namespace Hospital_Management_System.Domain.Entities.Doctors
             : base(doctorId, doctorName, address, birthDate)
         {
             this.hireDate = hireDate;
-            salary = 0;
+            this.salary = 0;
             CalculateSalary();
         }
 
         public override decimal CalculateSalary()
         {
-            decimal currentSalary = SalarySettings.BaseStaffSalary;
+            decimal currentSalary = Doctor.BaseStaffSalary;
 
             int years = DateTime.Now.Year - hireDate.Year;
 

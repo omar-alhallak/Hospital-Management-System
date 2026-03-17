@@ -11,7 +11,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Data
         public DateTime TreatmentDate { get; set; }
         public decimal Cost { get; set; }
 
-        public DateTime DischargeDate { get; set; }
+        public DateTime? DischargeDate { get; set; }
         public int DepartmentID { get; set; }
 
         public int ClinicNumber { get; set; }

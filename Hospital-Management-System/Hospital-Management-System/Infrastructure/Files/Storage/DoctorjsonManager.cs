@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Collections.Generic;
 using Hospital_Management_System.Application.Records;
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Infrastructure.Files.Data;
@@ -11,6 +10,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
     public class DoctorJsonManager
     {
         private string filePath;
+
         public string FilePath
         {
             get { return filePath; }
@@ -19,7 +19,10 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         public DoctorJsonManager()
         {
-            filePath = "Doctors.json";
+            filePath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Doctors.json"
+            );
         }
 
         public DoctorJsonManager(string filePath)
@@ -29,7 +32,8 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         public void SaveDoctors(DoctorRecord doctorRecord)
         {
-            List<DoctorData> doctorList = new List<DoctorData>();
+            DoctorData data = new DoctorData();
+            data.BaseStaffSalary = Doctor.BaseStaffSalary;
 
             Node<Doctor> current = doctorRecord.Doctors.Head;
 
@@ -39,7 +43,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 {
                     StaffDoctor doctor = (StaffDoctor)current.Data;
 
-                    doctorList.Add(new DoctorData
+                    data.Doctors.Add(new DoctorItemData
                     {
                         Type = "StaffDoctor",
                         DoctorID = doctor.DoctorID,
@@ -54,7 +58,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 {
                     TraineeDoctor doctor = (TraineeDoctor)current.Data;
 
-                    doctorList.Add(new DoctorData
+                    data.Doctors.Add(new DoctorItemData
                     {
                         Type = "TraineeDoctor",
                         DoctorID = doctor.DoctorID,
@@ -70,7 +74,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 {
                     ContractDoctor doctor = (ContractDoctor)current.Data;
 
-                    doctorList.Add(new DoctorData
+                    data.Doctors.Add(new DoctorItemData
                     {
                         Type = "ContractDoctor",
                         DoctorID = doctor.DoctorID,
@@ -85,7 +89,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 current = current.Next;
             }
 
-            string json = JsonSerializer.Serialize(doctorList, new JsonSerializerOptions
+            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions
             {
                 WriteIndented = true
             });
@@ -97,54 +101,58 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
         {
             DoctorRecord doctorRecord = new DoctorRecord();
 
-            if (!File.Exists(filePath)) return doctorRecord;
+            if (!File.Exists(filePath))
+                return doctorRecord;
 
             string json = File.ReadAllText(filePath);
 
-            List<DoctorData> doctorList = JsonSerializer.Deserialize<List<DoctorData>>(json);
+            DoctorData data = JsonSerializer.Deserialize<DoctorData>(json);
 
-            if (doctorList == null) return doctorRecord;
+            if (data == null)
+                return doctorRecord;
 
-            foreach (DoctorData data in doctorList)
+            Doctor.BaseStaffSalary = data.BaseStaffSalary;
+
+            foreach (DoctorItemData item in data.Doctors)
             {
-                if (data.Type == "StaffDoctor")
+                if (item.Type == "StaffDoctor")
                 {
                     StaffDoctor doctor = new StaffDoctor(
-                        data.DoctorID,
-                        data.DoctorName,
-                        data.Address,
-                        data.BirthDate,
-                        data.HireDate
+                        item.DoctorID,
+                        item.DoctorName,
+                        item.Address,
+                        item.BirthDate,
+                        item.HireDate
                     );
 
-                    doctor.Salary = data.Salary;
+                    doctor.Salary = item.Salary;
                     doctorRecord.AddDoctor(doctor);
                 }
-                else if (data.Type == "TraineeDoctor")
+                else if (item.Type == "TraineeDoctor")
                 {
                     TraineeDoctor doctor = new TraineeDoctor(
-                        data.DoctorID,
-                        data.DoctorName,
-                        data.Address,
-                        data.BirthDate,
-                        data.TrainingStartDate,
-                        data.TrainingEndDate
+                        item.DoctorID,
+                        item.DoctorName,
+                        item.Address,
+                        item.BirthDate,
+                        item.TrainingStartDate,
+                        item.TrainingEndDate
                     );
 
-                    doctor.Salary = data.Salary;
+                    doctor.Salary = item.Salary;
                     doctorRecord.AddDoctor(doctor);
                 }
-                else if (data.Type == "ContractDoctor")
+                else if (item.Type == "ContractDoctor")
                 {
                     ContractDoctor doctor = new ContractDoctor(
-                        data.DoctorID,
-                        data.DoctorName,
-                        data.Address,
-                        data.BirthDate
+                        item.DoctorID,
+                        item.DoctorName,
+                        item.Address,
+                        item.BirthDate
                     );
 
-                    doctor.TotalTreatmentCost = data.TotalTreatmentCost;
-                    doctor.Salary = data.Salary;
+                    doctor.TotalTreatmentCost = item.TotalTreatmentCost;
+                    doctor.Salary = item.Salary;
                     doctorRecord.AddDoctor(doctor);
                 }
             }

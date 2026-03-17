@@ -1,8 +1,9 @@
-﻿using System;
-using Hospital_Management_System.UI.Input;
+﻿using Hospital_Management_System.Application.Records;
 using Hospital_Management_System.Domain.Entities.Doctors;
+using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Domain.Entities.Treatments;
-using Hospital_Management_System.Application.Records;
+using Hospital_Management_System.UI.Input;
+using System;
 
 namespace Hospital_Management_System.UI.Menus
 {
@@ -10,6 +11,7 @@ namespace Hospital_Management_System.UI.Menus
     {
         private PatientRecord patientRecord;
         private DoctorRecord doctorRecord;
+        private const int DepartmentCount = 3;
 
         public TreatmentMenu(PatientRecord patientRecord, DoctorRecord doctorRecord)
         {
@@ -22,15 +24,25 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
                 Console.WriteLine("       Treatments Management");
                 Console.WriteLine("====================================");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Add Treatment To Patient");
-                Console.WriteLine("2. Display");
-                Console.WriteLine("3. Display Patients Treated In All Departments");
-                Console.WriteLine("4. Count Patients In Department");
+                Console.WriteLine("2. Update Treatment");
+                Console.WriteLine("3. Delete Treatment");
+                Console.WriteLine("4. Display");
+                Console.WriteLine("5. Display Patient Treatments");
+                Console.WriteLine("6. Display Patients Treated In All Departments");
+                Console.WriteLine("7. Count Patients In Department");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -40,103 +52,547 @@ namespace Hospital_Management_System.UI.Menus
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                     AddTreatmentToPatient();
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
-                    DisplayTreatmentMenu();
+                    UpdateTreatment();
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
-                    DisplayPatientsTreatedInAllDepartments();
+                    DeleteTreatment();
                 else if (key == ConsoleKey.D4 || key == ConsoleKey.NumPad4)
+                    DisplayTreatmentMenu();
+                else if (key == ConsoleKey.D5 || key == ConsoleKey.NumPad5)
+                    DisplayPatientTreatments();
+                else if (key == ConsoleKey.D6 || key == ConsoleKey.NumPad6)
+                    DisplayPatientsTreatedInAllDepartments();
+                else if (key == ConsoleKey.D7 || key == ConsoleKey.NumPad7)
                     CountPatientsInDepartment();
             }
         }
 
         private void AddTreatmentToPatient()
         {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("=========== Add Treatment ===========");
+                Console.ResetColor();
+
+                Console.WriteLine("1. Internal Treatment");
+                Console.WriteLine("2. External Treatment");
+                Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("=====================================");
+                Console.ResetColor();
+
+                ConsoleKey key = MenuInput.ReadMenuKey();
+
+                if (key == ConsoleKey.Backspace)
+                    return;
+
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Yellow;
+
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                    Console.WriteLine("Adding: Internal Treatment");
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+                    Console.WriteLine("Adding: External Treatment");
+                else
+                {
+                    Console.ResetColor();
+                    continue;
+                }
+
+                Console.ResetColor();
+                Console.WriteLine();
+
+                int? treatmentId = MenuInput.ReadUniqueTreatmentId("Treatment ID: ", patientRecord);
+                if (treatmentId == null)
+                    continue;
+
+                Patient patient;
+                int patientId;
+
+                while (true)
+                {
+                    int? enteredPatientId = MenuInput.ReadValidInt("Patient ID: ");
+                    if (enteredPatientId == null)
+                    {
+                        patientId = -1;
+                        break;
+                    }
+
+                    patient = patientRecord.FindPatientById(enteredPatientId.Value);
+
+                    if (patient == null)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Patient not found. Please enter a valid patient ID.");
+                        Console.ResetColor();
+                        continue;
+                    }
+
+                    patientId = enteredPatientId.Value;
+                    break;
+                }
+
+                if (patientId == -1)
+                    continue;
+
+                patient = patientRecord.FindPatientById(patientId);
+
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                {
+                    DateTime treatmentDate;
+
+                    while (true)
+                    {
+                        DateTime? enteredDate = MenuInput.ReadValidDate("Treatment Date: ");
+                        if (enteredDate == null)
+                        {
+                            treatmentDate = DateTime.MinValue;
+                            break;
+                        }
+
+                        if (enteredDate.Value <= patient.BirthDate)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid treatment date. It must be after patient birth date.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        if (enteredDate.Value > DateTime.Now)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid treatment date. It cannot be in the future.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        treatmentDate = enteredDate.Value;
+                        break;
+                    }
+
+                    if (treatmentDate == DateTime.MinValue)
+                        continue;
+
+                    DateTime? dischargeDate;
+
+                    while (true)
+                    {
+                        string dischargeInput = MenuInput.ReadField("Discharge Date (press N if not discharged yet): ");
+                        if (dischargeInput == null)
+                        {
+                            dischargeDate = DateTime.MinValue;
+                            break;
+                        }
+
+                        if (string.Equals(dischargeInput, "N", StringComparison.OrdinalIgnoreCase))
+                        {
+                            dischargeDate = null;
+                            break;
+                        }
+
+                        DateTime parsedDischarge;
+                        if (!DateTime.TryParse(dischargeInput, out parsedDischarge))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid discharge date.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        if (parsedDischarge < treatmentDate)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid discharge date. It must be after or equal to treatment date.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        if (parsedDischarge > DateTime.Now)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid discharge date. It cannot be in the future.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        dischargeDate = parsedDischarge;
+                        break;
+                    }
+
+                    if (dischargeDate == DateTime.MinValue)
+                        continue;
+
+                    decimal? cost = MenuInput.ReadValidDecimal("Cost: ");
+                    if (cost == null)
+                        continue;
+
+                    int? departmentId;
+
+                    while (true)
+                    {
+                        departmentId = MenuInput.ReadValidInt("Department ID (1-3): ");
+                        if (departmentId == null)
+                            break;
+
+                        if (departmentId.Value < 1 || departmentId.Value > DepartmentCount)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid department ID. Choose a department between 1 and 3.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    if (departmentId == null)
+                        continue;
+
+                    InternalTreatment treatment = new InternalTreatment(
+                        treatmentId.Value,
+                        patientId,
+                        treatmentDate,
+                        cost.Value,
+                        dischargeDate,
+                        departmentId.Value
+                    );
+
+                    patientRecord.AddTreatmentToPatient(patientId, treatment);
+                }
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+                {
+                    DateTime? treatmentDate;
+
+                    while (true)
+                    {
+                        treatmentDate = MenuInput.ReadValidDate("Treatment Date: ");
+                        if (treatmentDate == null)
+                            break;
+
+                        if (treatmentDate.Value <= patient.BirthDate)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid treatment date. It must be after patient birth date.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        if (treatmentDate.Value > DateTime.Now)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid treatment date. It cannot be in the future.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    if (treatmentDate == null)
+                        continue;
+
+                    Doctor treatingDoctor;
+
+                    while (true)
+                    {
+                        int? enteredDoctorId = MenuInput.ReadValidInt("Treating Doctor ID: ");
+                        if (enteredDoctorId == null)
+                        {
+                            treatingDoctor = null;
+                            break;
+                        }
+
+                        treatingDoctor = doctorRecord.FindDoctorById(enteredDoctorId.Value);
+
+                        if (treatingDoctor == null)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Treating doctor not found. Please enter a valid doctor ID.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        bool validDate = false;
+
+                        if (treatingDoctor is StaffDoctor)
+                        {
+                            StaffDoctor staffDoctor = (StaffDoctor)treatingDoctor;
+                            validDate = treatmentDate.Value >= staffDoctor.HireDate;
+                        }
+                        else if (treatingDoctor is TraineeDoctor)
+                        {
+                            TraineeDoctor traineeDoctor = (TraineeDoctor)treatingDoctor;
+                            validDate = treatmentDate.Value >= traineeDoctor.TrainingStartDate;
+                        }
+                        else if (treatingDoctor is ContractDoctor)
+                        {
+                            validDate = treatmentDate.Value > treatingDoctor.BirthDate;
+                        }
+
+                        if (!validDate)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("Invalid treatment date for this doctor. Please enter another doctor ID.");
+                            Console.ResetColor();
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    if (treatingDoctor == null)
+                        continue;
+
+                    decimal? cost = MenuInput.ReadValidDecimal("Cost: ");
+                    if (cost == null)
+                        continue;
+
+                    int? clinicNumber = MenuInput.ReadValidInt("Clinic Number (numbers only): ");
+                    if (clinicNumber == null)
+                        continue;
+
+                    ExternalTreatment treatment = new ExternalTreatment(
+                        treatmentId.Value,
+                        patientId,
+                        treatmentDate.Value,
+                        cost.Value,
+                        clinicNumber.Value,
+                        treatingDoctor
+                    );
+
+                    patientRecord.AddTreatmentToPatient(patientId, treatment);
+                }
+
+                Console.WriteLine();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Treatment added successfully.");
+                Console.ResetColor();
+
+                MenuInput.Pause();
+                continue;
+            }
+        }
+
+        private void UpdateTreatment()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine("=========== Update Treatment ===========");
+                Console.ResetColor();
+
+                MenuInput.ShowBackMessage();
+
+                int? treatmentId = MenuInput.ReadValidInt("Treatment ID: ");
+                if (treatmentId == null)
+                    return;
+
+                Treatment treatment = patientRecord.FindTreatmentById(treatmentId.Value);
+
+                if (treatment == null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Treatment not found.");
+                    Console.ResetColor();
+                    MenuInput.Pause();
+                    continue;
+                }
+
+                while (true)
+                {
+                    Console.Clear();
+
+                    if (treatment is InternalTreatment)
+                    {
+                        InternalTreatment internalTreatment = (InternalTreatment)treatment;
+                        Console.WriteLine("Treatment ID: " + internalTreatment.TreatmentID + " (InternalTreatment)");
+                        Console.WriteLine("Patient ID: " + internalTreatment.PatientID);
+                        Console.WriteLine("Treatment Date: " + internalTreatment.TreatmentDate.ToString("dd/MM/yyyy"));
+                        Console.WriteLine("Cost: " + internalTreatment.Cost);
+                        Console.WriteLine("Department ID: " + internalTreatment.DepartmentID);
+
+                        if (internalTreatment.DischargeDate == null)
+                            Console.WriteLine("Discharge Date: Not Discharged Yet");
+                        else
+                            Console.WriteLine("Discharge Date: " + internalTreatment.DischargeDate.Value.ToString("dd/MM/yyyy"));
+                    }
+                    else if (treatment is ExternalTreatment)
+                    {
+                        ExternalTreatment externalTreatment = (ExternalTreatment)treatment;
+                        Console.WriteLine("Treatment ID: " + externalTreatment.TreatmentID + " (ExternalTreatment)");
+                        Console.WriteLine("Patient ID: " + externalTreatment.PatientID);
+                        Console.WriteLine("Treatment Date: " + externalTreatment.TreatmentDate.ToString("dd/MM/yyyy"));
+                        Console.WriteLine("Cost: " + externalTreatment.Cost);
+                        Console.WriteLine("Clinic Number: " + externalTreatment.ClinicNumber);
+
+                        if (externalTreatment.TreatingDoctor != null)
+                            Console.WriteLine("Treating Doctor: " + externalTreatment.TreatingDoctor.DoctorName);
+                    }
+
+                    Console.WriteLine("-----------------------------------");
+                    Console.WriteLine("1. Update Treatment Date");
+                    Console.WriteLine("2. Update Cost");
+                    Console.WriteLine("Backspace. Go Back");
+
+                    ConsoleKey key = MenuInput.ReadMenuKey();
+
+                    if (key == ConsoleKey.Backspace)
+                        break;
+
+                    if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+                    {
+                        Patient patient = patientRecord.FindPatientById(treatment.PatientID);
+
+                        while (true)
+                        {
+                            DateTime? newDate = MenuInput.ReadValidDate("New Treatment Date: ");
+                            if (newDate == null)
+                                break;
+
+                            if (patient != null && newDate.Value <= patient.BirthDate)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Invalid treatment date. It must be after patient birth date.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            if (newDate.Value > DateTime.Now)
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Invalid treatment date. It cannot be in the future.");
+                                Console.ResetColor();
+                                continue;
+                            }
+
+                            if (treatment is ExternalTreatment)
+                            {
+                                ExternalTreatment externalTreatment = (ExternalTreatment)treatment;
+                                Doctor doctor = externalTreatment.TreatingDoctor;
+
+                                bool validDoctorDate = true;
+
+                                if (doctor is StaffDoctor)
+                                {
+                                    StaffDoctor staffDoctor = (StaffDoctor)doctor;
+                                    validDoctorDate = newDate.Value >= staffDoctor.HireDate;
+                                }
+                                else if (doctor is TraineeDoctor)
+                                {
+                                    TraineeDoctor traineeDoctor = (TraineeDoctor)doctor;
+                                    validDoctorDate = newDate.Value >= traineeDoctor.TrainingStartDate;
+                                }
+                                else if (doctor is ContractDoctor)
+                                {
+                                    validDoctorDate = newDate.Value > doctor.BirthDate;
+                                }
+
+                                if (!validDoctorDate)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("Invalid treatment date. It must be after doctor's valid start date.");
+                                    Console.ResetColor();
+                                    continue;
+                                }
+                            }
+
+                            if (treatment is InternalTreatment)
+                            {
+                                InternalTreatment internalTreatment = (InternalTreatment)treatment;
+
+                                if (internalTreatment.DischargeDate != null &&
+                                    newDate.Value > internalTreatment.DischargeDate.Value)
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine("Invalid treatment date. It must be before or equal to discharge date.");
+                                    Console.ResetColor();
+                                    continue;
+                                }
+                            }
+
+                            treatment.TreatmentDate = newDate.Value;
+
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Treatment date updated successfully.");
+                            Console.ResetColor();
+                            MenuInput.Pause();
+                            break;
+                        }
+                    }
+                    else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+                    {
+                        while (true)
+                        {
+                            decimal? newCost = MenuInput.ReadValidDecimal("New Cost: ");
+                            if (newCost == null)
+                                break;
+
+                            if (treatment is ExternalTreatment)
+                            {
+                                ExternalTreatment externalTreatment = (ExternalTreatment)treatment;
+
+                                if (externalTreatment.TreatingDoctor is ContractDoctor)
+                                {
+                                    ContractDoctor contractDoctor = (ContractDoctor)externalTreatment.TreatingDoctor;
+                                    decimal oldCost = externalTreatment.Cost;
+
+                                    contractDoctor.RemoveTreatmentCost(oldCost);
+                                    contractDoctor.AddTreatmentCost(newCost.Value);
+                                }
+                            }
+
+                            treatment.Cost = newCost.Value;
+
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Treatment cost updated successfully.");
+                            Console.ResetColor();
+                            MenuInput.Pause();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DeleteTreatment()
+        {
             Console.Clear();
-            Console.WriteLine("1. Internal Treatment");
-            Console.WriteLine("2. External Treatment");
             MenuInput.ShowBackMessage();
 
-            ConsoleKey key = MenuInput.ReadMenuKey();
-
-            if (key == ConsoleKey.Backspace)
-                return;
-
-            int? treatmentId = MenuInput.ReadUniqueTreatmentId("Treatment ID: ", patientRecord);
+            int? treatmentId = MenuInput.ReadValidInt("Treatment ID to delete: ");
             if (treatmentId == null) return;
 
-            int? patientId = MenuInput.ReadValidInt("Patient ID: ");
-            if (patientId == null) return;
+            Treatment treatment = patientRecord.FindTreatmentById(treatmentId.Value);
 
-            if (patientRecord.FindPatientById(patientId.Value) == null)
+            if (treatment == null)
             {
-                Console.WriteLine("Patient not found.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Treatment not found.");
+                Console.ResetColor();
                 MenuInput.Pause();
                 return;
             }
 
-            if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
+            bool deleted = patientRecord.DeleteTreatment(treatmentId.Value);
+
+            if (deleted)
             {
-                DateTime treatmentDate;
-                DateTime dischargeDate;
-
-                MenuInput.ReadValidTreatmentDates(out treatmentDate, out dischargeDate);
-
-                if (treatmentDate == DateTime.MinValue && dischargeDate == DateTime.MinValue)
-                    return;
-
-                decimal? cost = MenuInput.ReadValidDecimal("Cost: ");
-                if (cost == null) return;
-
-                int? departmentId = MenuInput.ReadValidInt("Department ID: ");
-                if (departmentId == null) return;
-
-                InternalTreatment treatment = new InternalTreatment(
-                    treatmentId.Value,
-                    patientId.Value,
-                    treatmentDate,
-                    cost.Value,
-                    dischargeDate,
-                    departmentId.Value
-                );
-
-                patientRecord.AddTreatmentToPatient(patientId.Value, treatment);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Treatment deleted successfully.");
+                Console.ResetColor();
             }
-            else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
+            else
             {
-                DateTime? treatmentDate = MenuInput.ReadValidDate("Treatment Date: ");
-                if (treatmentDate == null) return;
-
-                decimal? cost = MenuInput.ReadValidDecimal("Cost: ");
-                if (cost == null) return;
-
-                int? clinicNumber = MenuInput.ReadValidInt("Clinic Number: ");
-                if (clinicNumber == null) return;
-
-                int? doctorId = MenuInput.ReadValidInt("Treating Doctor ID: ");
-                if (doctorId == null) return;
-
-                Doctor treatingDoctor = doctorRecord.FindDoctorById(doctorId.Value);
-
-                if (treatingDoctor == null)
-                {
-                    Console.WriteLine("Treating doctor not found.");
-                    MenuInput.Pause();
-                    return;
-                }
-
-                ExternalTreatment treatment = new ExternalTreatment(
-                    treatmentId.Value,
-                    patientId.Value,
-                    treatmentDate.Value,
-                    cost.Value,
-                    clinicNumber.Value,
-                    treatingDoctor
-                );
-
-                patientRecord.AddTreatmentToPatient(patientId.Value, treatment);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Delete failed.");
+                Console.ResetColor();
             }
 
-            Console.WriteLine();
-            Console.WriteLine("Treatment added successfully.");
             MenuInput.Pause();
         }
 
@@ -145,12 +601,19 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========== Display Treatments ===========");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Display All Treatments");
                 Console.WriteLine("2. Display Internal Treatments");
                 Console.WriteLine("3. Display External Treatments");
                 Console.WriteLine("Backspace. Go Back");
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("==========================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
@@ -180,6 +643,19 @@ namespace Hospital_Management_System.UI.Menus
             }
         }
 
+        private void DisplayPatientTreatments()
+        {
+            Console.Clear();
+            MenuInput.ShowBackMessage();
+
+            int? patientId = MenuInput.ReadValidInt("Patient ID: ");
+            if (patientId == null) return;
+
+            Console.WriteLine();
+            patientRecord.DisplayPatientTreatments(patientId.Value);
+            MenuInput.Pause();
+        }
+
         private void DisplayPatientsTreatedInAllDepartments()
         {
             Console.Clear();
@@ -191,14 +667,11 @@ namespace Hospital_Management_System.UI.Menus
             DateTime? endDate = MenuInput.ReadValidDate("End Date: ");
             if (endDate == null) return;
 
-            int? departmentCount = MenuInput.ReadValidInt("Department Count: ");
-            if (departmentCount == null) return;
-
             Console.WriteLine();
             patientRecord.DisplayPatientsTreatedInAllDepartments(
                 startDate.Value,
                 endDate.Value,
-                departmentCount.Value
+                DepartmentCount
             );
 
             MenuInput.Pause();
@@ -225,7 +698,9 @@ namespace Hospital_Management_System.UI.Menus
             );
 
             Console.WriteLine();
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Patients Count = " + count);
+            Console.ResetColor();
             MenuInput.Pause();
         }
     }

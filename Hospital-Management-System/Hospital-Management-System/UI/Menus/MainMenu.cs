@@ -33,20 +33,30 @@ namespace Hospital_Management_System.UI.Menus
             while (true)
             {
                 Console.Clear();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
                 Console.WriteLine("     Hospital Management System");
                 Console.WriteLine("====================================");
+                Console.ResetColor();
+
                 Console.WriteLine("1. Doctors Management");
                 Console.WriteLine("2. Patients Management");
                 Console.WriteLine("3. Treatments Management");
+
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("4. Exit");
+                Console.ResetColor();
+
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("====================================");
+                Console.ResetColor();
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
-                    DoctorMenu doctorMenu = new DoctorMenu(doctorRecord);
+                    DoctorMenu doctorMenu = new DoctorMenu(doctorRecord, patientRecord);
                     doctorMenu.Show();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
@@ -61,7 +71,7 @@ namespace Hospital_Management_System.UI.Menus
                 }
                 else if (key == ConsoleKey.D4 || key == ConsoleKey.NumPad4)
                 {
-                    Program.SaveAllData();
+                    Program.SaveData();
                     return;
                 }
             }
