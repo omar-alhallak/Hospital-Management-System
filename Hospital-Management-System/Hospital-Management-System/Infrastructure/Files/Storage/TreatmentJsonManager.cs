@@ -1,17 +1,16 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.IO;
 using System.Text.Json;
-using Hospital_Management_System.Infrastructure.Files.Data;
-using Hospital_Management_System.Infrastructure.DataStructures;
-using Hospital_Management_System.Domain.Entities.Patients;
-using Hospital_Management_System.Domain.Entities.Treatments;
-using Hospital_Management_System.Domain.Entities.Doctors;
+using System.Collections.Generic;
 using Hospital_Management_System.Application.Management;
+using Hospital_Management_System.Domain.Entities.Doctors;
+using Hospital_Management_System.Domain.Entities.Patients;
+using Hospital_Management_System.Infrastructure.Files.Data;
+using Hospital_Management_System.Domain.Entities.Treatments;
+using Hospital_Management_System.Infrastructure.DataStructures;
 
 namespace Hospital_Management_System.Infrastructure.Files.Storage
 {
-    public class TreatmentJsonManager
+    public class TreatmentJsonManager // حفظ وتحميل البيانات من json
     {
         private string filePath;
         public string FilePath
@@ -22,7 +21,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         public TreatmentJsonManager()
         {
-            filePath = "Treatments.json";
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "Treatments.json");
         }
 
         public TreatmentJsonManager(string filePath)
@@ -30,13 +29,11 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             this.filePath = filePath;
         }
 
-        ~TreatmentJsonManager() { }
-
-        public void SaveTreatments(PatientManagement patientRecord)
+        public void SaveTreatments(TreatmentManagement treatmentMang) // حفظ
         {
             List<TreatmentData> treatmentList = new List<TreatmentData>();
 
-            Node<Patient> currentPatient = patientRecord.Patients.Head;
+            Node<Patient> currentPatient = treatmentMang.Patients.Head;
 
             while (currentPatient != null)
             {
@@ -66,8 +63,8 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                     {
                         int doctorId = 0;
 
-                        if (currentExternal.Data.TreatingDoctor != null)
-                            doctorId = currentExternal.Data.TreatingDoctor.DoctorID;
+                        if (currentExternal.Data.TreatingDoctor != null) { 
+                            doctorId = currentExternal.Data.TreatingDoctor.DoctorID; }
 
                         treatmentList.Add(new TreatmentData
                         {
@@ -92,8 +89,8 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                     {
                         int doctorId = 0;
 
-                        if (currentExternal.Data.TreatingDoctor != null)
-                            doctorId = currentExternal.Data.TreatingDoctor.DoctorID;
+                        if (currentExternal.Data.TreatingDoctor != null) { 
+                            doctorId = currentExternal.Data.TreatingDoctor.DoctorID; }
 
                         treatmentList.Add(new TreatmentData
                         {
@@ -113,25 +110,20 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 currentPatient = currentPatient.Next;
             }
 
-            string json = JsonSerializer.Serialize(treatmentList, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            string json = JsonSerializer.Serialize(treatmentList, new JsonSerializerOptions { WriteIndented = true });
 
             File.WriteAllText(filePath, json);
         }
 
-        public void LoadTreatments(PatientManagement patientRecord, DoctorManagement doctorRecord)
+        public void LoadTreatments(DoctorManagement doctorMang, TreatmentManagement treatmentMang) // تحميل
         {
-            if (!File.Exists(filePath))
-                return;
+            if (!File.Exists(filePath)) return;
 
             string json = File.ReadAllText(filePath);
 
             List<TreatmentData> treatmentList = JsonSerializer.Deserialize<List<TreatmentData>>(json);
 
-            if (treatmentList == null)
-                return;
+            if (treatmentList == null) return;
 
             foreach (TreatmentData data in treatmentList)
             {
@@ -146,11 +138,11 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                         data.DepartmentID
                     );
 
-                    patientRecord.AddTreatmentToPatient(data.PatientID, treatment);
+                    treatmentMang.AddTreatmentToPatient(data.PatientID, treatment);
                 }
                 else if (data.Type == "ExternalTreatment")
                 {
-                    Doctor doctor = doctorRecord.FindDoctorById(data.TreatingDoctorID);
+                    Doctor doctor = doctorMang.FindDoctorById(data.TreatingDoctorID);
 
                     ExternalTreatment treatment = new ExternalTreatment(
                         data.TreatmentID,
@@ -161,7 +153,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                         doctor
                     );
 
-                    patientRecord.AddTreatmentToPatient(data.PatientID, treatment);
+                    treatmentMang.AddTreatmentToPatient(data.PatientID, treatment);
                 }
             }
         }

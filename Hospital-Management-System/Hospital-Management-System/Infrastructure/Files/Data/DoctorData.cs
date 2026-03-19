@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Hospital_Management_System.Infrastructure.Files.Data
 {
-    public class DoctorData
+    public class DoctorData // DTO
     {
         public decimal BaseStaffSalary { get; set; }
         public List<DoctorItemData> Doctors { get; set; }

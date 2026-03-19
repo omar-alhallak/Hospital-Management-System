@@ -7,7 +7,7 @@ using Hospital_Management_System.Infrastructure.DataStructures;
 
 namespace Hospital_Management_System.Infrastructure.Files.Storage
 {
-    public class DoctorJsonManager
+    public class DoctorJsonManager // حفظ وتحميل البيانات من json
     {
         private string filePath;
 
@@ -19,10 +19,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         public DoctorJsonManager()
         {
-            filePath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Doctors.json"
-            );
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "Doctors.json");
         }
 
         public DoctorJsonManager(string filePath)
@@ -30,12 +27,12 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             this.filePath = filePath;
         }
 
-        public void SaveDoctors(DoctorManagement doctorRecord)
+        public void SaveDoctors(DoctorManagement doctorMang) // حفظ
         {
             DoctorData data = new DoctorData();
             data.BaseStaffSalary = StaffDoctor.BaseStaffSalary;
 
-            Node<Doctor> current = doctorRecord.Doctors.Head;
+            Node<Doctor> current = doctorMang.Doctors.Head;
 
             while (current != null)
             {
@@ -89,27 +86,22 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 current = current.Next;
             }
 
-            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            string json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
 
             File.WriteAllText(filePath, json);
         }
 
-        public DoctorManagement LoadDoctors()
+        public DoctorManagement LoadDoctors() // تحميل
         {
             DoctorManagement doctorRecord = new DoctorManagement();
 
-            if (!File.Exists(filePath))
-                return doctorRecord;
+            if (!File.Exists(filePath)) return doctorRecord;
 
             string json = File.ReadAllText(filePath);
 
             DoctorData data = JsonSerializer.Deserialize<DoctorData>(json);
 
-            if (data == null)
-                return doctorRecord;
+            if (data == null) return doctorRecord;
 
             StaffDoctor.BaseStaffSalary = data.BaseStaffSalary;
 

@@ -1,13 +1,13 @@
-﻿using Hospital_Management_System.Application.Services;
-using Hospital_Management_System.Application.Management;
-using System;
+﻿using System;
 using System.Text;
+using Hospital_Management_System.Application.Services;
+using Hospital_Management_System.Application.Management;
 
-namespace Hospital_Management_System.UI.Input
+namespace Hospital_Management_System.ConsoleUI.Input
 {
-    public static class MenuInput
+    public static class MenuInput // مسؤول عن الإدخال
     {
-        public static string ReadField(string label)
+        public static string ReadField(string label) // تقرأ النص وتتحكم بعمل أزرار الكيبورد (Backspace ,Enter)
         {
             Console.Write(label);
 
@@ -45,72 +45,32 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static string ReadValidName(string label)
+        public static string ReadValidText(string label) // تفحص النص عند الإدخال
         {
             while (true)
             {
                 string input = ReadField(label);
 
-                if (input == null)
-                    return null;
+                if (input == null) return null;
 
-                if (ValidationServices.IsValidName(input))
-                    return input;
+                if (ValidationServices.IsValidEnglishText(input)) return input;
 
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid name. Use English letters and spaces only.");
+                Console.WriteLine("Invalid input. Use English letters and spaces only.");
                 Console.ResetColor();
             }
         }
 
-        public static string ReadValidAddress(string label)
+        public static int? ReadValidInt(string label) // تفحص أن أيدي رقم موجب حصرا
         {
             while (true)
             {
                 string input = ReadField(label);
 
-                if (input == null)
-                    return null;
-
-                if (ValidationServices.IsValidAddress(input))
-                    return input;
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid address. Use English letters and spaces only.");
-                Console.ResetColor();
-            }
-        }
-
-        public static string ReadSearchText(string label)
-        {
-            while (true)
-            {
-                string input = ReadField(label);
-
-                if (input == null)
-                    return null;
-
-                if (ValidationServices.IsValidName(input))
-                    return input;
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid search text. Use English letters and spaces only.");
-                Console.ResetColor();
-            }
-        }
-
-        public static int? ReadValidInt(string label)
-        {
-            while (true)
-            {
-                string input = ReadField(label);
-
-                if (input == null)
-                    return null;
+                if (input == null) return null;
 
                 int value;
-                if (int.TryParse(input, out value) && ValidationServices.IsPositiveInt(value))
-                    return value;
+                if (int.TryParse(input, out value) && ValidationServices.IsPositiveInt(value)) return value;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid input. Please enter a positive integer.");
@@ -118,18 +78,16 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static decimal? ReadValidDecimal(string label)
+        public static decimal? ReadValidDecimal(string label) // رقم موجب حصرا ويسمح بل 0 للرواتب
         {
             while (true)
             {
                 string input = ReadField(label);
 
-                if (input == null)
-                    return null;
+                if (input == null) return null;
 
                 decimal value;
-                if (decimal.TryParse(input, out value) && ValidationServices.IsPositiveDecimal(value))
-                    return value;
+                if (decimal.TryParse(input, out value) && ValidationServices.IsPositiveDecimal(value)) return value;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid input. Please enter a valid positive number.");
@@ -137,18 +95,16 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static DateTime? ReadValidDate(string label)
+        public static DateTime? ReadValidDate(string label) // تفحص أن تاريخ صالح
         {
             while (true)
             {
                 string input = ReadField(label);
 
-                if (input == null)
-                    return null;
+                if (input == null) return null;
 
                 DateTime value;
-                if (DateTime.TryParse(input, out value))
-                    return value;
+                if (DateTime.TryParse(input, out value)) return value;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid date. Please enter a valid date.");
@@ -156,17 +112,15 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static DateTime? ReadValidBirthDate(string label)
+        public static DateTime? ReadValidBirthDate(string label) // تفحص أن الميلاد ليس في المستقبل
         {
             while (true)
             {
                 DateTime? date = ReadValidDate(label);
 
-                if (date == null)
-                    return null;
+                if (date == null) return null;
 
-                if (ValidationServices.IsValidBirthDate(date.Value))
-                    return date;
+                if (ValidationServices.IsValidBirthDate(date.Value)) return date;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid birth date. It must be before today.");
@@ -174,17 +128,15 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static int? ReadUniqueDoctorId(string label, DoctorManagement doctorRecord)
+        public static int? ReadUniqueDoctorId(string label, DoctorManagement doctorMang) // تفحص ID
         {
             while (true)
             {
                 int? id = ReadValidInt(label);
 
-                if (id == null)
-                    return null;
+                if (id == null) return null;
 
-                if (ValidationServices.IsUniqueDoctorId(doctorRecord, id.Value))
-                    return id;
+                if (ValidationServices.IsUniqueDoctorId(doctorMang, id.Value)) return id;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Doctor ID already exists. Please enter another ID.");
@@ -192,17 +144,15 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static int? ReadUniquePatientId(string label, PatientManagement patientRecord)
+        public static int? ReadUniquePatientId(string label, PatientManagement patientMang) // تفحص ID
         {
             while (true)
             {
                 int? id = ReadValidInt(label);
 
-                if (id == null)
-                    return null;
+                if (id == null) return null;
 
-                if (ValidationServices.IsUniquePatientId(patientRecord, id.Value))
-                    return id;
+                if (ValidationServices.IsUniquePatientId(patientMang, id.Value)) return id;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Patient ID already exists. Please enter another ID.");
@@ -210,17 +160,15 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static int? ReadUniqueTreatmentId(string label, PatientManagement patientRecord)
+        public static int? ReadUniqueTreatmentId(string label, TreatmentManagement treatmentMang) // تفحص ID
         {
             while (true)
             {
                 int? id = ReadValidInt(label);
 
-                if (id == null)
-                    return null;
+                if (id == null) return null;
 
-                if (ValidationServices.IsUniqueTreatmentId(patientRecord, id.Value))
-                    return id;
+                if (ValidationServices.IsUniqueTreatmentId(treatmentMang, id.Value)) return id;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Treatment ID already exists. Please enter another ID.");
@@ -228,17 +176,15 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static DateTime? ReadValidHireDate(string label, DateTime birthDate)
+        public static DateTime? ReadValidHireDate(string label, DateTime birthDate) 
         {
             while (true)
             {
                 DateTime? date = ReadValidDate(label);
 
-                if (date == null)
-                    return null;
+                if (date == null) return null;
 
-                if (ValidationServices.IsValidHireDate(birthDate, date.Value))
-                    return date;
+                if (ValidationServices.IsValidHireDate(birthDate, date.Value)) return date;
 
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid hire date. It must be after birth date and not in the future.");
@@ -269,7 +215,7 @@ namespace Hospital_Management_System.UI.Input
                 if (start.Value > DateTime.Now)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid training start date. It cannot be in the future.");
+                    Console.WriteLine("Invalid training start date. It cant be in the future.");
                     Console.ResetColor();
                     continue;
                 }
@@ -331,7 +277,7 @@ namespace Hospital_Management_System.UI.Input
                 if (parsedEnd > DateTime.Now)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Invalid training end date. It cannot be in the future.");
+                    Console.WriteLine("Invalid training end date. It cant be in the future.");
                     Console.ResetColor();
                     continue;
                 }
@@ -341,40 +287,7 @@ namespace Hospital_Management_System.UI.Input
             }
         }
 
-        public static void ReadValidTreatmentDates(out DateTime treatmentDate, out DateTime dischargeDate)
-        {
-            while (true)
-            {
-                DateTime? treatment = ReadValidDate("Treatment Date: ");
-                if (treatment == null)
-                {
-                    treatmentDate = DateTime.MinValue;
-                    dischargeDate = DateTime.MinValue;
-                    return;
-                }
-
-                DateTime? discharge = ReadValidDate("Discharge Date: ");
-                if (discharge == null)
-                {
-                    treatmentDate = DateTime.MinValue;
-                    dischargeDate = DateTime.MinValue;
-                    return;
-                }
-
-                if (ValidationServices.IsValidTreatmentDates(treatment.Value, discharge.Value))
-                {
-                    treatmentDate = treatment.Value;
-                    dischargeDate = discharge.Value;
-                    return;
-                }
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid dates. Treatment date must be before or equal to discharge date.");
-                Console.ResetColor();
-            }
-        }
-
-        public static bool? ReadStatusChoice(string option1, string option2)
+        public static bool? ReadStatusChoice(string option1, string option2) // إدخال المتعلق بل bool
         {
             Console.WriteLine();
             Console.WriteLine("1 - " + option1);
@@ -414,7 +327,7 @@ namespace Hospital_Management_System.UI.Input
             Console.WriteLine();
         }
 
-        public static ConsoleKey ReadMenuKey()
+        public static ConsoleKey ReadMenuKey() // تقرأ محرف محرف عند الإدخال
         {
             ConsoleKeyInfo key = Console.ReadKey(true);
             return key.Key;

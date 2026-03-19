@@ -2,7 +2,7 @@
 
 namespace Hospital_Management_System.Infrastructure.Files.Data
 {
-    public class TreatmentData
+    public class TreatmentData // DTO
     {
         public string Type { get; set; }
 

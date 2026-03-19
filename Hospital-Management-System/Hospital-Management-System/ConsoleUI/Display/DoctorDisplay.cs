@@ -2,11 +2,11 @@
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Infrastructure.DataStructures;
 
-namespace Hospital_Management_System.UI.Display
+namespace Hospital_Management_System.ConsoleUI.Display
 {
-    public static class DoctorDisplay
+    public static class DoctorDisplay // طباعة بيانات الأطباء
     {
-        public static void DisplayAllDoctors(LinkedList<Doctor> doctors)
+        public static void DisplayAllDoctors(LinkedList<Doctor> doctors) 
         {
             Node<Doctor> current = doctors.Head;
 
@@ -23,8 +23,8 @@ namespace Hospital_Management_System.UI.Display
 
             while (current != null)
             {
-                if (current.Data is StaffDoctor)
-                    DisplayDoctor(current.Data);
+                if (current.Data is StaffDoctor) { 
+                    DisplayDoctor(current.Data); }
 
                 current = current.Next;
             }
@@ -36,8 +36,8 @@ namespace Hospital_Management_System.UI.Display
 
             while (current != null)
             {
-                if (current.Data is TraineeDoctor)
-                    DisplayDoctor(current.Data);
+                if (current.Data is TraineeDoctor) { 
+                    DisplayDoctor(current.Data); }
 
                 current = current.Next;
             }
@@ -49,8 +49,8 @@ namespace Hospital_Management_System.UI.Display
 
             while (current != null)
             {
-                if (current.Data is ContractDoctor)
-                    DisplayDoctor(current.Data);
+                if (current.Data is ContractDoctor) { 
+                    DisplayDoctor(current.Data); }
 
                 current = current.Next;
             }
@@ -80,10 +80,10 @@ namespace Hospital_Management_System.UI.Display
                 TraineeDoctor traineeDoctor = (TraineeDoctor)doctor;
                 Console.WriteLine("Training Start Date: " + traineeDoctor.TrainingStartDate.ToString("dd/MM/yyyy"));
 
-                if (traineeDoctor.TrainingEndDate == null)
-                    Console.WriteLine("Training End Date: Not Finished Yet");
-                else
-                    Console.WriteLine("Training End Date: " + traineeDoctor.TrainingEndDate.Value.ToString("dd/MM/yyyy"));
+                if (traineeDoctor.TrainingEndDate == null) { 
+                    Console.WriteLine("Training End Date: Has not ended Yet"); }
+                else { 
+                    Console.WriteLine("Training End Date: " + traineeDoctor.TrainingEndDate.Value.ToString("dd/MM/yyyy")); }
 
                 Console.WriteLine("Salary: " + traineeDoctor.Salary);
             }

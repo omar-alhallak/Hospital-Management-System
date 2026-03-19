@@ -1,24 +1,25 @@
-﻿using System;
-using Hospital_Management_System.UI.Input;
-using Hospital_Management_System.UI.Display;
-using Hospital_Management_System.Application.Management;
-using Hospital_Management_System.Application.Services;
+﻿using Hospital_Management_System.Application.Management;
+using Hospital_Management_System.ConsoleUI.Display;
+using Hospital_Management_System.ConsoleUI.Input;
 using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Domain.Entities.Treatments;
+using System;
 
-namespace Hospital_Management_System.UI.Menus
+namespace Hospital_Management_System.ConsoleUI.Menus
 {
-    public class TreatmentMenu
+    public class TreatmentMenu // واجهة العلاجات
     {
-        private PatientManagement patientRecord;
-        private DoctorManagement doctorRecord;
+        private PatientManagement patientMang;
+        private DoctorManagement doctorMang;
+        private TreatmentManagement treatmentMang;
         private const int DepartmentCount = 3;
 
-        public TreatmentMenu(PatientManagement patientRecord, DoctorManagement doctorRecord)
+        public TreatmentMenu(PatientManagement patientMang, DoctorManagement doctorMang, TreatmentManagement treatmentMang)
         {
-            this.patientRecord = patientRecord;
-            this.doctorRecord = doctorRecord;
+            this.patientMang = patientMang;
+            this.doctorMang = doctorMang;
+            this.treatmentMang = treatmentMang;
         }
 
         public void Show()
@@ -48,27 +49,25 @@ namespace Hospital_Management_System.UI.Menus
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
-                if (key == ConsoleKey.Backspace)
-                    return;
+                if (key == ConsoleKey.Backspace) return;
 
-                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
-                    AddTreatmentToPatient();
-                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
-                    UpdateTreatment();
-                else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
-                    DeleteTreatment();
-                else if (key == ConsoleKey.D4 || key == ConsoleKey.NumPad4)
-                    DisplayTreatmentMenu();
-                else if (key == ConsoleKey.D5 || key == ConsoleKey.NumPad5)
-                    DisplayPatientTreatments();
-                else if (key == ConsoleKey.D6 || key == ConsoleKey.NumPad6)
-                    DisplayPatientsTreatedInAllDepartments();
-                else if (key == ConsoleKey.D7 || key == ConsoleKey.NumPad7)
-                    CountPatientsInDepartment();
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1) { AddTreatmentToPatient(); }
+
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2) { UpdateTreatment(); }
+
+                else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3) { DeleteTreatment(); }
+
+                else if (key == ConsoleKey.D4 || key == ConsoleKey.NumPad4) { DisplayTreatmentMenu(); }
+
+                else if (key == ConsoleKey.D5 || key == ConsoleKey.NumPad5) { DisplayPatientTreatments(); }
+
+                else if (key == ConsoleKey.D6 || key == ConsoleKey.NumPad6) { DisplayPatientsTreatedInAllDepartments(); }
+
+                else if (key == ConsoleKey.D7 || key == ConsoleKey.NumPad7) { CountPatientsInDepartment(); }
             }
         }
 
-        private void AddTreatmentToPatient()
+        private void AddTreatmentToPatient() // قسم الإضافة
         {
             while (true)
             {
@@ -88,16 +87,14 @@ namespace Hospital_Management_System.UI.Menus
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
-                if (key == ConsoleKey.Backspace)
-                    return;
+                if (key == ConsoleKey.Backspace) return;
 
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Yellow;
 
-                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
-                    Console.WriteLine("Adding: Internal Treatment");
-                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
-                    Console.WriteLine("Adding: External Treatment");
+                if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1) { Console.WriteLine("Adding: Internal Treatment"); }
+
+                else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2) { Console.WriteLine("Adding: External Treatment"); }
                 else
                 {
                     Console.ResetColor();
@@ -107,9 +104,8 @@ namespace Hospital_Management_System.UI.Menus
                 Console.ResetColor();
                 Console.WriteLine();
 
-                int? treatmentId = MenuInput.ReadUniqueTreatmentId("Treatment ID: ", patientRecord);
-                if (treatmentId == null)
-                    continue;
+                int? treatmentId = MenuInput.ReadUniqueTreatmentId("Treatment ID: ", treatmentMang);
+                if (treatmentId == null) continue;
 
                 Patient patient = null;
                 int patientId;
@@ -123,7 +119,7 @@ namespace Hospital_Management_System.UI.Menus
                         break;
                     }
 
-                    patient = patientRecord.FindPatientById(enteredPatientId.Value);
+                    patient = patientMang.FindPatientById(enteredPatientId.Value);
 
                     if (patient == null)
                     {
@@ -136,7 +132,7 @@ namespace Hospital_Management_System.UI.Menus
                     if ((key == ConsoleKey.D1 || key == ConsoleKey.NumPad1) && patient is ExternalPatient)
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Cannot add internal treatment to an external patient.");
+                        Console.WriteLine("Cant add internal treatment to an external patient.");
                         Console.WriteLine("External patients can only have external treatments.");
                         Console.ResetColor();
                         continue;
@@ -146,8 +142,7 @@ namespace Hospital_Management_System.UI.Menus
                     break;
                 }
 
-                if (patientId == -1)
-                    continue;
+                if (patientId == -1) continue;
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
@@ -173,7 +168,7 @@ namespace Hospital_Management_System.UI.Menus
                         if (enteredDate.Value > DateTime.Now)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Invalid treatment date. It cannot be in the future.");
+                            Console.WriteLine("Invalid treatment date. It cant be in the future.");
                             Console.ResetColor();
                             continue;
                         }
@@ -182,8 +177,7 @@ namespace Hospital_Management_System.UI.Menus
                         break;
                     }
 
-                    if (treatmentDate == DateTime.MinValue)
-                        continue;
+                    if (treatmentDate == DateTime.MinValue) continue;
 
                     DateTime? dischargeDate;
 
@@ -222,7 +216,7 @@ namespace Hospital_Management_System.UI.Menus
                         if (parsedDischarge > DateTime.Now)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Invalid discharge date. It cannot be in the future.");
+                            Console.WriteLine("Invalid discharge date. It cant be in the future.");
                             Console.ResetColor();
                             continue;
                         }
@@ -231,20 +225,17 @@ namespace Hospital_Management_System.UI.Menus
                         break;
                     }
 
-                    if (dischargeDate == DateTime.MinValue)
-                        continue;
+                    if (dischargeDate == DateTime.MinValue) continue;
 
                     decimal? cost = MenuInput.ReadValidDecimal("Cost: ");
-                    if (cost == null)
-                        continue;
+                    if (cost == null) continue;
 
                     int? departmentId;
 
                     while (true)
                     {
                         departmentId = MenuInput.ReadValidInt("Department ID (1-3): ");
-                        if (departmentId == null)
-                            break;
+                        if (departmentId == null) break;
 
                         if (departmentId.Value < 1 || departmentId.Value > DepartmentCount)
                         {
@@ -257,19 +248,11 @@ namespace Hospital_Management_System.UI.Menus
                         break;
                     }
 
-                    if (departmentId == null)
-                        continue;
+                    if (departmentId == null) continue;
 
-                    InternalTreatment treatment = new InternalTreatment(
-                        treatmentId.Value,
-                        patientId,
-                        treatmentDate,
-                        cost.Value,
-                        dischargeDate,
-                        departmentId.Value
-                    );
+                    InternalTreatment treatment = new InternalTreatment(treatmentId.Value, patientId, treatmentDate, cost.Value, dischargeDate, departmentId.Value);
 
-                    patientRecord.AddTreatmentToPatient(patientId, treatment);
+                    treatmentMang.AddTreatmentToPatient(patientId, treatment);
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
@@ -278,8 +261,7 @@ namespace Hospital_Management_System.UI.Menus
                     while (true)
                     {
                         treatmentDate = MenuInput.ReadValidDate("Treatment Date: ");
-                        if (treatmentDate == null)
-                            break;
+                        if (treatmentDate == null) break;
 
                         if (treatmentDate.Value <= patient.BirthDate)
                         {
@@ -292,7 +274,7 @@ namespace Hospital_Management_System.UI.Menus
                         if (treatmentDate.Value > DateTime.Now)
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Invalid treatment date. It cannot be in the future.");
+                            Console.WriteLine("Invalid treatment date. It cant be in the future.");
                             Console.ResetColor();
                             continue;
                         }
@@ -300,8 +282,7 @@ namespace Hospital_Management_System.UI.Menus
                         break;
                     }
 
-                    if (treatmentDate == null)
-                        continue;
+                    if (treatmentDate == null) continue;
 
                     Doctor treatingDoctor;
 
@@ -314,7 +295,7 @@ namespace Hospital_Management_System.UI.Menus
                             break;
                         }
 
-                        treatingDoctor = doctorRecord.FindDoctorById(enteredDoctorId.Value);
+                        treatingDoctor = doctorMang.FindDoctorById(enteredDoctorId.Value);
 
                         if (treatingDoctor == null)
                         {
@@ -352,27 +333,17 @@ namespace Hospital_Management_System.UI.Menus
                         break;
                     }
 
-                    if (treatingDoctor == null)
-                        continue;
+                    if (treatingDoctor == null) continue;
 
                     decimal? cost = MenuInput.ReadValidDecimal("Cost: ");
-                    if (cost == null)
-                        continue;
+                    if (cost == null) continue;
 
-                    int? clinicNumber = MenuInput.ReadValidInt("Clinic Number (numbers only): ");
-                    if (clinicNumber == null)
-                        continue;
+                    int? clinicNumber = MenuInput.ReadValidInt("Clinic Number : ");
+                    if (clinicNumber == null) continue;
 
-                    ExternalTreatment treatment = new ExternalTreatment(
-                        treatmentId.Value,
-                        patientId,
-                        treatmentDate.Value,
-                        cost.Value,
-                        clinicNumber.Value,
-                        treatingDoctor
-                    );
+                    ExternalTreatment treatment = new ExternalTreatment(treatmentId.Value, patientId, treatmentDate.Value, cost.Value, clinicNumber.Value, treatingDoctor);
 
-                    patientRecord.AddTreatmentToPatient(patientId, treatment);
+                    treatmentMang.AddTreatmentToPatient(patientId, treatment);
                 }
 
                 Console.WriteLine();
@@ -385,7 +356,7 @@ namespace Hospital_Management_System.UI.Menus
             }
         }
 
-        private void UpdateTreatment()
+        private void UpdateTreatment() // قسم التحديث
         {
             while (true)
             {
@@ -398,10 +369,9 @@ namespace Hospital_Management_System.UI.Menus
                 MenuInput.ShowBackMessage();
 
                 int? treatmentId = MenuInput.ReadValidInt("Treatment ID: ");
-                if (treatmentId == null)
-                    return;
+                if (treatmentId == null) return;
 
-                Treatment treatment = patientRecord.FindTreatmentById(treatmentId.Value);
+                Treatment treatment = treatmentMang.FindTreatmentById(treatmentId.Value);
 
                 if (treatment == null)
                 {
@@ -425,10 +395,10 @@ namespace Hospital_Management_System.UI.Menus
                         Console.WriteLine("Cost: " + internalTreatment.Cost);
                         Console.WriteLine("Department ID: " + internalTreatment.DepartmentID);
 
-                        if (internalTreatment.DischargeDate == null)
-                            Console.WriteLine("Discharge Date: Not Discharged Yet");
-                        else
-                            Console.WriteLine("Discharge Date: " + internalTreatment.DischargeDate.Value.ToString("dd/MM/yyyy"));
+                        if (internalTreatment.DischargeDate == null) { 
+                            Console.WriteLine("Discharge Date: Not Discharged Yet"); }
+                        else { 
+                            Console.WriteLine("Discharge Date: " + internalTreatment.DischargeDate.Value.ToString("dd/MM/yyyy")); }
                     }
                     else if (treatment is ExternalTreatment)
                     {
@@ -450,18 +420,16 @@ namespace Hospital_Management_System.UI.Menus
 
                     ConsoleKey key = MenuInput.ReadMenuKey();
 
-                    if (key == ConsoleKey.Backspace)
-                        break;
+                    if (key == ConsoleKey.Backspace) break;
 
                     if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                     {
-                        Patient patient = patientRecord.FindPatientById(treatment.PatientID);
+                        Patient patient = patientMang.FindPatientById(treatment.PatientID);
 
                         while (true)
                         {
                             DateTime? newDate = MenuInput.ReadValidDate("New Treatment Date: ");
-                            if (newDate == null)
-                                break;
+                            if (newDate == null) break;
 
                             if (patient != null && newDate.Value <= patient.BirthDate)
                             {
@@ -474,7 +442,7 @@ namespace Hospital_Management_System.UI.Menus
                             if (newDate.Value > DateTime.Now)
                             {
                                 Console.ForegroundColor = ConsoleColor.Red;
-                                Console.WriteLine("Invalid treatment date. It cannot be in the future.");
+                                Console.WriteLine("Invalid treatment date. It cant be in the future.");
                                 Console.ResetColor();
                                 continue;
                             }
@@ -538,8 +506,7 @@ namespace Hospital_Management_System.UI.Menus
                         while (true)
                         {
                             decimal? newCost = MenuInput.ReadValidDecimal("New Cost: ");
-                            if (newCost == null)
-                                break;
+                            if (newCost == null) break;
 
                             if (treatment is ExternalTreatment)
                             {
@@ -568,15 +535,15 @@ namespace Hospital_Management_System.UI.Menus
             }
         }
 
-        private void DeleteTreatment()
+        private void DeleteTreatment() // قسم الحذف
         {
-            Console.Clear();
+            Console.Clear(); 
             MenuInput.ShowBackMessage();
 
             int? treatmentId = MenuInput.ReadValidInt("Treatment ID to delete: ");
             if (treatmentId == null) return;
 
-            Treatment treatment = patientRecord.FindTreatmentById(treatmentId.Value);
+            Treatment treatment = treatmentMang.FindTreatmentById(treatmentId.Value);
 
             if (treatment == null)
             {
@@ -587,7 +554,7 @@ namespace Hospital_Management_System.UI.Menus
                 return;
             }
 
-            bool deleted = patientRecord.DeleteTreatment(treatmentId.Value);
+            bool deleted = treatmentMang.DeleteTreatment(treatmentId.Value);
 
             if (deleted)
             {
@@ -605,7 +572,8 @@ namespace Hospital_Management_System.UI.Menus
             MenuInput.Pause();
         }
 
-        private void DisplayTreatmentMenu()
+        // ----------- قسم العرض -----------
+        private void DisplayTreatmentMenu() 
         {
             while (true)
             {
@@ -626,27 +594,26 @@ namespace Hospital_Management_System.UI.Menus
 
                 ConsoleKey key = MenuInput.ReadMenuKey();
 
-                if (key == ConsoleKey.Backspace)
-                    return;
+                if (key == ConsoleKey.Backspace) return;
 
                 Console.Clear();
 
                 if (key == ConsoleKey.D1 || key == ConsoleKey.NumPad1)
                 {
-                    PatientDisplay.DisplayAllTreatments(patientRecord.Patients);
-                    Console.WriteLine("Total Treatments: " + PatientReportService.GetAllTreatmentsCount(patientRecord.Patients));
+                    TreatmentDisplay.DisplayAllTreatments(patientMang.Patients);
+                    Console.WriteLine("Total Treatments: " + treatmentMang.GetAllTreatmentsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D2 || key == ConsoleKey.NumPad2)
                 {
-                    PatientDisplay.DisplayInternalTreatments(patientRecord.Patients);
-                    Console.WriteLine("Total Internal Treatments: " + PatientReportService.GetInternalTreatmentsCount(patientRecord.Patients));
+                    TreatmentDisplay.DisplayInternalTreatments(patientMang.Patients);
+                    Console.WriteLine("Total Internal Treatments: " + treatmentMang.GetInternalTreatmentsCount());
                     MenuInput.Pause();
                 }
                 else if (key == ConsoleKey.D3 || key == ConsoleKey.NumPad3)
                 {
-                    PatientDisplay.DisplayExternalTreatments(patientRecord.Patients);
-                    Console.WriteLine("Total External Treatments: " + PatientReportService.GetExternalTreatmentsCount(patientRecord.Patients));
+                    TreatmentDisplay.DisplayExternalTreatments(patientMang.Patients);
+                    Console.WriteLine("Total External Treatments: " + treatmentMang.GetExternalTreatmentsCount());
                     MenuInput.Pause();
                 }
             }
@@ -661,8 +628,8 @@ namespace Hospital_Management_System.UI.Menus
             if (patientId == null) return;
 
             Console.WriteLine();
-            Patient patient = patientRecord.FindPatientById(patientId.Value);
-            PatientDisplay.DisplayPatientTreatments(patient);
+            Patient patient = patientMang.FindPatientById(patientId.Value);
+            TreatmentDisplay.DisplayPatientTreatments(patient);
             MenuInput.Pause();
         }
 
@@ -678,17 +645,12 @@ namespace Hospital_Management_System.UI.Menus
             if (endDate == null) return;
 
             Console.WriteLine();
-            PatientReportService.DisplayPatientsTreatedInAllDepartments(
-                patientRecord.Patients,
-                startDate.Value,
-                endDate.Value,
-                DepartmentCount
-            );
+            treatmentMang.DisplayPatientsTreatedInAllDepartments(startDate.Value, endDate.Value, DepartmentCount);
 
             MenuInput.Pause();
         }
 
-        private void CountPatientsInDepartment()
+        private void CountPatientsInDepartment() // قسم عدد الموظفين في كل قسم
         {
             Console.Clear();
             MenuInput.ShowBackMessage();
@@ -702,12 +664,7 @@ namespace Hospital_Management_System.UI.Menus
             DateTime? endDate = MenuInput.ReadValidDate("End Date: ");
             if (endDate == null) return;
 
-            int count = PatientReportService.CountPatientsInDepartment(
-                patientRecord.Patients,
-                departmentId.Value,
-                startDate.Value,
-                endDate.Value
-            );
+            int count = treatmentMang.CountPatientsInDepartment(departmentId.Value, startDate.Value, endDate.Value);
 
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.Green;

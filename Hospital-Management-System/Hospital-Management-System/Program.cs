@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Hospital_Management_System.UI.Menus;
+using Hospital_Management_System.ConsoleUI.Menus;
 using Hospital_Management_System.Application.Management;
 using Hospital_Management_System.Infrastructure.Files.Storage;
 
-namespace Hospital_Management_System.UI
+namespace Hospital_Management_System.ConsoleUI
 {
     internal class Program
     {
@@ -12,21 +12,19 @@ namespace Hospital_Management_System.UI
         private static PatientJsonManager patientJsonManager;
         private static TreatmentJsonManager treatmentJsonManager;
 
-        private static DoctorManagement doctorRecord;
-        private static PatientManagement patientRecord;
+        private static DoctorManagement doctorMang;
+        private static PatientManagement patientMang;
+        private static TreatmentManagement treatmentMang; 
 
         private static bool dataSaved = false;
 
         private delegate bool ConsoleEventDelegate(int eventType);
         private static ConsoleEventDelegate consoleEventHandler;
 
-        private const int CTRL_C_EVENT = 0;
-        private const int CTRL_BREAK_EVENT = 1;
         private const int CTRL_CLOSE_EVENT = 2;
-        private const int CTRL_LOGOFF_EVENT = 5;
         private const int CTRL_SHUTDOWN_EVENT = 6;
 
-        [DllImport("Kernel32")]
+        [DllImport("Kernel32")] // تستدعي الأحداث 
         private static extern bool SetConsoleCtrlHandler(ConsoleEventDelegate callback, bool add);
 
         static void Main(string[] args)
@@ -35,78 +33,46 @@ namespace Hospital_Management_System.UI
             patientJsonManager = new PatientJsonManager();
             treatmentJsonManager = new TreatmentJsonManager();
 
-            try
-            {
-                doctorRecord = doctorJsonManager.LoadDoctors();
-            }
-            catch
-            {
-                doctorRecord = new DoctorManagement();
-            }
+            try { doctorMang = doctorJsonManager.LoadDoctors(); }
 
-            doctorRecord.ResetContractDoctorsTreatmentCosts();
+            catch { doctorMang = new DoctorManagement(); }
 
-            try
-            {
-                patientRecord = patientJsonManager.LoadPatients();
-            }
-            catch
-            {
-                patientRecord = new PatientManagement();
-            }
+            doctorMang.ResetContractDoctorsTreatmentCosts();
 
-            try
-            {
-                treatmentJsonManager.LoadTreatments(patientRecord, doctorRecord);
-            }
-            catch
-            {
-            }
+            try { patientMang = patientJsonManager.LoadPatients(); }
 
-            doctorRecord.RefreshAllDoctorSalaries();
+            catch { patientMang = new PatientManagement(); }
+
+            treatmentMang = new TreatmentManagement(patientMang.Patients);
+
+            try { treatmentJsonManager.LoadTreatments(doctorMang, treatmentMang); }
+
+            catch { }
+
+            doctorMang.RefreshAllDoctorSalaries();
 
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
-            Console.CancelKeyPress += Console_CancelKeyPress;
 
             consoleEventHandler = new ConsoleEventDelegate(ConsoleEventCallback);
             SetConsoleCtrlHandler(consoleEventHandler, true);
 
             try
             {
-                MainMenu mainMenu = new MainMenu(
-                    doctorRecord,
-                    patientRecord,
-                    doctorJsonManager,
-                    patientJsonManager,
-                    treatmentJsonManager
-                );
+                MainMenu mainMenu = new MainMenu(doctorMang, patientMang, treatmentMang);
 
                 mainMenu.Show();
             }
-            finally
-            {
-                SaveData();
-            }
+
+            finally { SaveData(); }
         }
 
-        private static void CurrentDomain_ProcessExit(object sender, EventArgs e)
-        {
-            SaveData();
-        }
-
-        private static void Console_CancelKeyPress(object sender, ConsoleCancelEventArgs e)
-        {
-            SaveData();
-        }
+        private static void CurrentDomain_ProcessExit(object sender, EventArgs e) { SaveData(); }
 
         private static bool ConsoleEventCallback(int eventType)
         {
             switch (eventType)
-            {
-                case CTRL_C_EVENT:
-                case CTRL_BREAK_EVENT:
+            { 
                 case CTRL_CLOSE_EVENT:
-                case CTRL_LOGOFF_EVENT:
                 case CTRL_SHUTDOWN_EVENT:
                     SaveData();
                     break;
@@ -117,21 +83,18 @@ namespace Hospital_Management_System.UI
 
         public static void SaveData()
         {
-            if (dataSaved)
-                return;
+            if (dataSaved) return;
 
             try
             {
-                doctorRecord.RefreshAllDoctorSalaries();
-                doctorJsonManager.SaveDoctors(doctorRecord);
-                patientJsonManager.SavePatients(patientRecord);
-                treatmentJsonManager.SaveTreatments(patientRecord);
+                doctorMang.RefreshAllDoctorSalaries();
+                doctorJsonManager.SaveDoctors(doctorMang);
+                patientJsonManager.SavePatients(patientMang);
+                treatmentJsonManager.SaveTreatments(treatmentMang);
 
                 dataSaved = true;
             }
-            catch
-            {
-            }
+            catch { }
         }
     }
 }

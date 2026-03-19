@@ -68,8 +68,7 @@ namespace Hospital_Management_System.Application.Management
                 current = current.Next;
             }
 
-            if (current.Next != null) { 
-                current.Next = current.Next.Next; }
+            if (current.Next != null) { current.Next = current.Next.Next; }
         }
 
         public Doctor FindDoctorById(int doctorId) // البحث عن طريق ID
@@ -103,10 +102,9 @@ namespace Hospital_Management_System.Application.Management
 
                     DateTime hireDate;
 
-                    if (trainee.TrainingEndDate != null) { 
-                        hireDate = trainee.TrainingEndDate.Value; }
-                    else { 
-                        hireDate = DateTime.Now; }
+                    if (trainee.TrainingEndDate != null) { hireDate = trainee.TrainingEndDate.Value; }
+
+                    else { hireDate = DateTime.Now; }
 
                     StaffDoctor staffDoctor = new StaffDoctor(trainee.DoctorID, trainee.DoctorName, trainee.Address, trainee.BirthDate, hireDate);
 
@@ -123,26 +121,22 @@ namespace Hospital_Management_System.Application.Management
         {
             Doctor doctor = FindDoctorById(doctorId);
 
-            if (doctor != null) { 
-                doctor.DoctorName = doctorName; }
+            if (doctor != null) { doctor.DoctorName = doctorName; }
         }
 
         public void UpdateDoctorAddress(int doctorId, string address) // تحديث العنوان
         {
             Doctor doctor = FindDoctorById(doctorId);
 
-            if (doctor != null) { 
-                doctor.Address = address; }
+            if (doctor != null) { doctor.Address = address; }
         }
 
         public void UpdateDoctorBirthDate(int doctorId, DateTime birthDate) // تحديث الميلاد
         {
             Doctor doctor = FindDoctorById(doctorId);
 
-            if (doctor != null) { 
-                doctor.BirthDate = birthDate; }
+            if (doctor != null) { doctor.BirthDate = birthDate; }
         }
-        // ----------------------------------------------------------------
 
         public void RefreshAllDoctorSalaries() // تحديث كل رواتب الأطباء
         {
@@ -171,6 +165,7 @@ namespace Hospital_Management_System.Application.Management
                 current = current.Next;
             }
         }
+        // ----------------------------------------------------------------
 
         public int GetDoctorsCount() // حساب عدد جميع الأطباء
         {

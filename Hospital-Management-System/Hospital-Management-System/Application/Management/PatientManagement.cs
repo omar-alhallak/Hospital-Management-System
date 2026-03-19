@@ -1,8 +1,6 @@
 ﻿using System;
 using Hospital_Management_System.Application.Services;
-using Hospital_Management_System.Domain.Entities.Doctors;
 using Hospital_Management_System.Domain.Entities.Patients;
-using Hospital_Management_System.Domain.Entities.Treatments;
 using Hospital_Management_System.Infrastructure.DataStructures;
 
 namespace Hospital_Management_System.Application.Management
@@ -77,45 +75,6 @@ namespace Hospital_Management_System.Application.Management
             return false;
         }
 
-        public bool HasDoctorTreatments(int doctorId) // هل الطبيب المتعاقد عنده علاجات
-        {
-            Node<Patient> currentPatient = patients.Head;
-
-            while (currentPatient != null)
-            {
-                if (currentPatient.Data is InternalPatient)
-                {
-                    InternalPatient internalPatient = (InternalPatient)currentPatient.Data;
-
-                    Node<ExternalTreatment> currentExternal = internalPatient.ExternalTreatments.Head;
-                    while (currentExternal != null)
-                    {
-                        if (currentExternal.Data.TreatingDoctor != null &&
-                            currentExternal.Data.TreatingDoctor.DoctorID == doctorId) return true;
-
-                        currentExternal = currentExternal.Next;
-                    }
-                }
-                else if (currentPatient.Data is ExternalPatient)
-                {
-                    ExternalPatient externalPatient = (ExternalPatient)currentPatient.Data;
-
-                    Node<ExternalTreatment> currentExternal = externalPatient.ExternalTreatments.Head;
-                    while (currentExternal != null)
-                    {
-                        if (currentExternal.Data.TreatingDoctor != null &&
-                            currentExternal.Data.TreatingDoctor.DoctorID == doctorId) return true;
-
-                        currentExternal = currentExternal.Next;
-                    }
-                }
-
-                currentPatient = currentPatient.Next;
-            }
-
-            return false;
-        }
-
         public bool DeletePatient(int patientId) // حذف المريض
         {
             if (patients.Head == null) return false;
@@ -167,193 +126,26 @@ namespace Hospital_Management_System.Application.Management
             return SearchService.SearchPatientsByName(patients, searchText);
         }
 
-        public Treatment FindTreatmentById(int treatmentId) // البحث عن علاج معين عند جميع المرضى
-        {
-            Node<Patient> currentPatient = patients.Head;
-
-            while (currentPatient != null)
-            {
-                if (currentPatient.Data is InternalPatient)
-                {
-                    InternalPatient internalPatient = (InternalPatient)currentPatient.Data;
-
-                    Node<InternalTreatment> currentInternal = internalPatient.InternalTreatments.Head;
-                    while (currentInternal != null)
-                    {
-                        if (currentInternal.Data.TreatmentID == treatmentId) return currentInternal.Data;
-
-                        currentInternal = currentInternal.Next;
-                    }
-
-                    Node<ExternalTreatment> currentExternal = internalPatient.ExternalTreatments.Head;
-                    while (currentExternal != null)
-                    {
-                        if (currentExternal.Data.TreatmentID == treatmentId) return currentExternal.Data;
-
-                        currentExternal = currentExternal.Next;
-                    }
-                }
-                else if (currentPatient.Data is ExternalPatient)
-                {
-                    ExternalPatient externalPatient = (ExternalPatient)currentPatient.Data;
-
-                    Node<ExternalTreatment> currentExternal = externalPatient.ExternalTreatments.Head;
-                    while (currentExternal != null)
-                    {
-                        if (currentExternal.Data.TreatmentID == treatmentId) return currentExternal.Data;
-
-                        currentExternal = currentExternal.Next;
-                    }
-                }
-
-                currentPatient = currentPatient.Next;
-            }
-
-            return null;
-        }
-
-        public bool DeleteTreatment(int treatmentId) // حذف علاج
-        {
-            Node<Patient> currentPatient = patients.Head;
-
-            while (currentPatient != null)
-            {
-                if (currentPatient.Data is InternalPatient)
-                {
-                    InternalPatient internalPatient = (InternalPatient)currentPatient.Data;
-
-                    if (internalPatient.InternalTreatments.Head != null)
-                    {
-                        if (internalPatient.InternalTreatments.Head.Data.TreatmentID == treatmentId)
-                        {
-                            internalPatient.InternalTreatments.Head = internalPatient.InternalTreatments.Head.Next;
-                            return true;
-                        }
-
-                        Node<InternalTreatment> currentInternal = internalPatient.InternalTreatments.Head;
-
-                        while (currentInternal.Next != null)
-                        {
-                            if (currentInternal.Next.Data.TreatmentID == treatmentId)
-                            {
-                                currentInternal.Next = currentInternal.Next.Next;
-                                return true;
-                            }
-
-                            currentInternal = currentInternal.Next;
-                        }
-                    }
-
-                    if (internalPatient.ExternalTreatments.Head != null)
-                    {
-                        if (internalPatient.ExternalTreatments.Head.Data.TreatmentID == treatmentId)
-                        {
-                            ExternalTreatment treatment = internalPatient.ExternalTreatments.Head.Data;
-
-                            if (treatment.TreatingDoctor is ContractDoctor)
-                            {
-                                ContractDoctor contractDoctor = (ContractDoctor)treatment.TreatingDoctor;
-                                contractDoctor.RemoveTreatmentCost(treatment.Cost);
-                            }
-
-                            internalPatient.ExternalTreatments.Head = internalPatient.ExternalTreatments.Head.Next;
-                            return true;
-                        }
-
-                        Node<ExternalTreatment> currentExternal = internalPatient.ExternalTreatments.Head;
-
-                        while (currentExternal.Next != null)
-                        {
-                            if (currentExternal.Next.Data.TreatmentID == treatmentId)
-                            {
-                                ExternalTreatment treatment = currentExternal.Next.Data;
-
-                                if (treatment.TreatingDoctor is ContractDoctor)
-                                {
-                                    ContractDoctor contractDoctor = (ContractDoctor)treatment.TreatingDoctor;
-                                    contractDoctor.RemoveTreatmentCost(treatment.Cost);
-                                }
-
-                                currentExternal.Next = currentExternal.Next.Next;
-                                return true;
-                            }
-
-                            currentExternal = currentExternal.Next;
-                        }
-                    }
-                }
-                else if (currentPatient.Data is ExternalPatient)
-                {
-                    ExternalPatient externalPatient = (ExternalPatient)currentPatient.Data;
-
-                    if (externalPatient.ExternalTreatments.Head != null)
-                    {
-                        if (externalPatient.ExternalTreatments.Head.Data.TreatmentID == treatmentId)
-                        {
-                            ExternalTreatment treatment = externalPatient.ExternalTreatments.Head.Data;
-
-                            if (treatment.TreatingDoctor is ContractDoctor)
-                            {
-                                ContractDoctor contractDoctor = (ContractDoctor)treatment.TreatingDoctor;
-                                contractDoctor.RemoveTreatmentCost(treatment.Cost);
-                            }
-
-                            externalPatient.ExternalTreatments.Head = externalPatient.ExternalTreatments.Head.Next;
-                            return true;
-                        }
-
-                        Node<ExternalTreatment> currentExternal = externalPatient.ExternalTreatments.Head;
-
-                        while (currentExternal.Next != null)
-                        {
-                            if (currentExternal.Next.Data.TreatmentID == treatmentId)
-                            {
-                                ExternalTreatment treatment = currentExternal.Next.Data;
-
-                                if (treatment.TreatingDoctor is ContractDoctor)
-                                {
-                                    ContractDoctor contractDoctor = (ContractDoctor)treatment.TreatingDoctor;
-                                    contractDoctor.RemoveTreatmentCost(treatment.Cost);
-                                }
-
-                                currentExternal.Next = currentExternal.Next.Next;
-                                return true;
-                            }
-
-                            currentExternal = currentExternal.Next;
-                        }
-                    }
-                }
-
-                currentPatient = currentPatient.Next;
-            }
-
-            return false;
-        }
-
         // ---------- UPDATE ----------
         public void UpdatePatientName(int patientId, string patientName) // تحديث الأسم
         {
             Patient patient = FindPatientById(patientId);
 
-            if (patient != null) { 
-                patient.PatientName = patientName; }
+            if (patient != null) { patient.PatientName = patientName; }
         }
 
         public void UpdatePatientAddress(int patientId, string address) // تحديث العنوان
         {
             Patient patient = FindPatientById(patientId);
 
-            if (patient != null) { 
-                patient.Address = address; }
+            if (patient != null) { patient.Address = address; }
         }
 
         public void UpdatePatientBirthDate(int patientId, DateTime birthDate) // تحديث الميلاد
         {
             Patient patient = FindPatientById(patientId);
 
-            if (patient != null) { 
-                patient.BirthDate = birthDate; }
+            if (patient != null) { patient.BirthDate = birthDate; }
         }
         // ----------------------------------------------------------------
 
@@ -376,48 +168,6 @@ namespace Hospital_Management_System.Application.Management
             {
                 ExternalPatient externalPatient = (ExternalPatient)patient;
                 externalPatient.IsAccepted = true;
-            }
-        }
-
-        public void AddTreatmentToPatient(int patientId, Treatment treatment) // إضافة معالجة للمريض
-        {
-            Patient patient = FindPatientById(patientId);
-
-            if (patient == null || treatment == null) return;
-
-            if (patient is InternalPatient)
-            {
-                InternalPatient internalPatient = (InternalPatient)patient;
-
-                if (treatment is InternalTreatment) { 
-                    internalPatient.InternalTreatments.AddLast((InternalTreatment)treatment); }
-                else if (treatment is ExternalTreatment)
-                {
-                    ExternalTreatment externalTreatment = (ExternalTreatment)treatment;
-                    internalPatient.ExternalTreatments.AddLast(externalTreatment);
-
-                    if (externalTreatment.TreatingDoctor is ContractDoctor)
-                    {
-                        ContractDoctor contractDoctor = (ContractDoctor)externalTreatment.TreatingDoctor;
-                        contractDoctor.AddTreatmentCost(externalTreatment.Cost);
-                    }
-                }
-            }
-            else if (patient is ExternalPatient)
-            {
-                ExternalPatient externalPatient = (ExternalPatient)patient;
-
-                if (treatment is ExternalTreatment)
-                {
-                    ExternalTreatment externalTreatment = (ExternalTreatment)treatment;
-                    externalPatient.ExternalTreatments.AddLast(externalTreatment);
-
-                    if (externalTreatment.TreatingDoctor is ContractDoctor)
-                    {
-                        ContractDoctor contractDoctor = (ContractDoctor)externalTreatment.TreatingDoctor;
-                        contractDoctor.AddTreatmentCost(externalTreatment.Cost);
-                    }
-                }
             }
         }
 

@@ -72,8 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application\Management\DoctorManagement.cs" />
-    <Compile Include="Application\Services\PatientReportService.cs" />
-    <Compile Include="UI\Display\DoctorDisplay.cs" />
+    <Compile Include="Application\Management\TreatmentManagement.cs" />
+    <Compile Include="ConsoleUI\Display\DoctorDisplay.cs" />
+    <Compile Include="ConsoleUI\Display\TreatmentDisplay.cs" />
     <Compile Include="Infrastructure\DataStructures\LinkedList.cs" />
     <Compile Include="Application\Management\PatientManagement.cs" />
     <Compile Include="Infrastructure\Files\Data\DoctorData.cs" />
@@ -87,12 +88,12 @@
     <Compile Include="Domain\Entities\Patients\Patients.cs" />
     <Compile Include="Domain\Entities\Treatments\Treatment.cs" />
     <Compile Include="Infrastructure\DataStructures\Node.cs" />
-    <Compile Include="UI\Display\PatientDisplay.cs" />
-    <Compile Include="UI\Menus\DoctorMenu.cs" />
-    <Compile Include="UI\Menus\MainMenu.cs" />
-    <Compile Include="UI\Input\MenuInput.cs" />
-    <Compile Include="UI\Menus\PatientMenu.cs" />
-    <Compile Include="UI\Menus\TreatmentMenu.cs" />
+    <Compile Include="ConsoleUI\Display\PatientDisplay.cs" />
+    <Compile Include="ConsoleUI\Menus\DoctorMenu.cs" />
+    <Compile Include="ConsoleUI\Menus\MainMenu.cs" />
+    <Compile Include="ConsoleUI\Input\MenuInput.cs" />
+    <Compile Include="ConsoleUI\Menus\PatientMenu.cs" />
+    <Compile Include="ConsoleUI\Menus\TreatmentMenu.cs" />
     <Compile Include="Infrastructure\Files\Data\PatientData.cs" />
     <Compile Include="Infrastructure\Files\Storage\PatientJsonManager.cs" />
     <Compile Include="Program.cs" />

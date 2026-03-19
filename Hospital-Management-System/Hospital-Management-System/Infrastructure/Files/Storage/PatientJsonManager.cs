@@ -1,15 +1,14 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using System.IO;
 using System.Text.Json;
+using System.Collections.Generic;
+using Hospital_Management_System.Application.Management;
+using Hospital_Management_System.Domain.Entities.Patients;
 using Hospital_Management_System.Infrastructure.Files.Data;
 using Hospital_Management_System.Infrastructure.DataStructures;
-using Hospital_Management_System.Domain.Entities.Patients;
-using Hospital_Management_System.Application.Management;
 
 namespace Hospital_Management_System.Infrastructure.Files.Storage
 {
-    public class PatientJsonManager
+    public class PatientJsonManager // حفظ وتحميل البيانات من json
     {
         private string filePath;
         public string FilePath
@@ -20,7 +19,7 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
 
         public PatientJsonManager()
         {
-            filePath = "Patients.json";
+            filePath = Path.Combine(Directory.GetCurrentDirectory(), "Patients.json");
         }
 
         public PatientJsonManager(string filePath)
@@ -28,13 +27,11 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             this.filePath = filePath;
         }
 
-        ~PatientJsonManager() { }
-
-        public void SavePatients(PatientManagement patientRecord)
+        public void SavePatients(PatientManagement patientMang) // حفظ
         {
             List<PatientData> patientList = new List<PatientData>();
 
-            Node<Patient> current = patientRecord.Patients.Head;
+            Node<Patient> current = patientMang.Patients.Head;
 
             while (current != null)
             {
@@ -70,27 +67,22 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
                 current = current.Next;
             }
 
-            string json = JsonSerializer.Serialize(patientList, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            });
+            string json = JsonSerializer.Serialize(patientList, new JsonSerializerOptions { WriteIndented = true });
 
             File.WriteAllText(filePath, json);
         }
 
-        public PatientManagement LoadPatients()
+        public PatientManagement LoadPatients() // تحميل
         {
             PatientManagement patientRecord = new PatientManagement();
 
-            if (!File.Exists(filePath))
-                return patientRecord;
+            if (!File.Exists(filePath)) return patientRecord;
 
             string json = File.ReadAllText(filePath);
 
             List<PatientData> patientList = JsonSerializer.Deserialize<List<PatientData>>(json);
 
-            if (patientList == null)
-                return patientRecord;
+            if (patientList == null) return patientRecord;
 
             foreach (PatientData data in patientList)
             {

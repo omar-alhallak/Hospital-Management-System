@@ -5,7 +5,7 @@ using Hospital_Management_System.Infrastructure.DataStructures;
 
 namespace Hospital_Management_System.Application.Services
 {
-    public static class SearchService
+    public static class SearchService // مسؤول عن البحث عن طريق الأسم
     {
         public static LinkedList<Doctor> SearchDoctorsByName(LinkedList<Doctor> doctors, string searchText)
         {
