@@ -27,6 +27,8 @@ namespace Hospital_Management_System.Infrastructure.Files.Storage
             this.filePath = filePath;
         }
 
+        ~PatientJsonManager() { }
+
         public void SavePatients(PatientManagement patientMang) // حفظ
         {
             List<PatientData> patientList = new List<PatientData>();
