@@ -7,9 +7,9 @@ namespace Hospital_Management_System_WinForm.Application.Services
 {
     public static class SearchService // مسؤول عن البحث عن طريق الأسم
     {
-        public static LinkedList<Doctor> SearchDoctorsByName(LinkedList<Doctor> doctors, string searchText)
+        public static Infrastructure.DataStructures.LinkedList<Doctor> SearchDoctorsByName(Infrastructure.DataStructures.LinkedList<Doctor> doctors, string searchText)
         {
-            LinkedList<Doctor> result = new LinkedList<Doctor>();
+            Infrastructure.DataStructures.LinkedList<Doctor> result = new Infrastructure.DataStructures.LinkedList<Doctor>();
 
             if (doctors == null || string.IsNullOrWhiteSpace(searchText)) return result;
 
@@ -29,9 +29,9 @@ namespace Hospital_Management_System_WinForm.Application.Services
             return result;
         }
 
-        public static LinkedList<Patient> SearchPatientsByName(LinkedList<Patient> patients, string searchText)
+        public static Infrastructure.DataStructures.LinkedList<Patient> SearchPatientsByName(Infrastructure.DataStructures.LinkedList<Patient> patients, string searchText)
         {
-            LinkedList<Patient> result = new LinkedList<Patient>();
+            Infrastructure.DataStructures.LinkedList<Patient> result = new Infrastructure.DataStructures.LinkedList<Patient>();
 
             if (patients == null || string.IsNullOrWhiteSpace(searchText)) return result;
 

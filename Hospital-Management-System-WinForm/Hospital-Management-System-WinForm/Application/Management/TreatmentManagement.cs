@@ -8,14 +8,14 @@ namespace Hospital_Management_System_WinForm.Application.Management
 {
     public class TreatmentManagement // إدارة العلاجات
     {
-        private LinkedList<Patient> patients;
-        public LinkedList<Patient> Patients
+        private Infrastructure.DataStructures.LinkedList<Patient> patients;
+        public Infrastructure.DataStructures.LinkedList<Patient> Patients
         {
             get { return patients; }
             set { patients = value; }
         }
 
-        public TreatmentManagement(LinkedList<Patient> patients)
+        public TreatmentManagement(Infrastructure.DataStructures.LinkedList<Patient> patients)
         {
             this.patients = patients;
         }
@@ -452,7 +452,7 @@ namespace Hospital_Management_System_WinForm.Application.Management
                     while (currentTreatment != null)
                     {
                         if (currentTreatment.Data.DepartmentID == departmentId &&
-                            currentTreatment.Data.TreatmentDate >= startDate && currentTreatment.Data.TreatmentDate <= endDate) 
+                            currentTreatment.Data.TreatmentDate >= startDate && currentTreatment.Data.TreatmentDate <= endDate)
                         {
                             count++;
                             break;

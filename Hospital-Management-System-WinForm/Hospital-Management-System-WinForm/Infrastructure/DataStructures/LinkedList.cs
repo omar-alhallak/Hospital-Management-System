@@ -1,11 +1,11 @@
 ﻿using System;
 
 namespace Hospital_Management_System_WinForm.Infrastructure.DataStructures
-{ 
+{
     public class LinkedList<T>
     {
-        private Node<T> head;
-        public Node<T> Head
+        private Node<T>? head;
+        public Node<T>? Head
         {
             get { return head; }
             set { head = value; }

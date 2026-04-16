@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
 {
@@ -41,8 +42,10 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
         {
             totalTreatmentCost -= cost;
 
-            if (totalTreatmentCost < 0) { 
-                totalTreatmentCost = 0; }
+            if (totalTreatmentCost < 0)
+            {
+                totalTreatmentCost = 0;
+            }
 
             CalculateSalary();
         }

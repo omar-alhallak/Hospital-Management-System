@@ -31,8 +31,8 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
             get { return birthDate; }
             set { birthDate = value; }
         }
-       
-        public Doctor() { }      
+
+        public Doctor() { }
 
         public Doctor(int doctorId, string doctorName, string address, DateTime birthDate)
         {

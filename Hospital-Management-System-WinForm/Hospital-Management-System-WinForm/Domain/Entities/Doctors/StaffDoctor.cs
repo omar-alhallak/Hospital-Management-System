@@ -36,8 +36,8 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
 
             int years = DateTime.Now.Year - hireDate.Year;
 
-            if (DateTime.Now.Month < hireDate.Month || (DateTime.Now.Month == hireDate.Month && DateTime.Now.Day < hireDate.Day)) 
-            { years--; } 
+            if (DateTime.Now.Month < hireDate.Month || (DateTime.Now.Month == hireDate.Month && DateTime.Now.Day < hireDate.Day))
+            { years--; }
 
             int NumberOfIncreases = years / 2;
 

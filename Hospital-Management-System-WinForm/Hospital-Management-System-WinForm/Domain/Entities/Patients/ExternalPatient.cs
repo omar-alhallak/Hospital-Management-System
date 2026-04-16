@@ -6,8 +6,8 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Patients
 {
     public class ExternalPatient : Patient // مريض خارجي
     {
-        private LinkedList<ExternalTreatment> externalTreatments;
-        public LinkedList<ExternalTreatment> ExternalTreatments
+        private Infrastructure.DataStructures.LinkedList<ExternalTreatment> externalTreatments;
+        public Infrastructure.DataStructures.LinkedList<ExternalTreatment> ExternalTreatments
         {
             get { return externalTreatments; }
             set { externalTreatments = value; }
@@ -22,14 +22,14 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Patients
 
         public ExternalPatient() : base()
         {
-            externalTreatments = new LinkedList<ExternalTreatment>();
+            externalTreatments = new Infrastructure.DataStructures.LinkedList<ExternalTreatment>();
         }
 
         public ExternalPatient(int patientId, string patientName, string address, DateTime birthDate, bool isAccepted)
             : base(patientId, patientName, address, birthDate)
         {
             this.isAccepted = isAccepted;
-            externalTreatments = new LinkedList<ExternalTreatment>();
+            externalTreatments = new Infrastructure.DataStructures.LinkedList<ExternalTreatment>();
         }
 
         ~ExternalPatient() { }

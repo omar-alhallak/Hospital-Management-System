@@ -7,8 +7,8 @@ namespace Hospital_Management_System_WinForm.Application.Management
 {
     public class PatientManagement // إدارة المرضى
     {
-        private LinkedList<Patient> patients;
-        public LinkedList<Patient> Patients
+        private Infrastructure.DataStructures.LinkedList<Patient> patients;
+        public Infrastructure.DataStructures.LinkedList<Patient> Patients
         {
             get { return patients; }
             set { patients = value; }
@@ -16,7 +16,7 @@ namespace Hospital_Management_System_WinForm.Application.Management
 
         public PatientManagement()
         {
-            patients = new LinkedList<Patient>();
+            patients = new Infrastructure.DataStructures.LinkedList<Patient>();
         }
 
         public void AddPatient(Patient patient) // إضافة
@@ -121,7 +121,7 @@ namespace Hospital_Management_System_WinForm.Application.Management
             return null;
         }
 
-        public LinkedList<Patient> SearchPatientsByName(string searchText) // البحث عن طريق Name
+        public Infrastructure.DataStructures.LinkedList<Patient> SearchPatientsByName(string searchText) // البحث عن طريق Name
         {
             return SearchService.SearchPatientsByName(patients, searchText);
         }

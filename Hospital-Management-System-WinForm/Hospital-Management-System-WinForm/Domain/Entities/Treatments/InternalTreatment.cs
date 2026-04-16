@@ -20,8 +20,8 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Treatments
             set { departmentId = value; }
         }
 
-        private LinkedList<Doctor> supervisors;
-        public LinkedList<Doctor> Supervisors
+        private Infrastructure.DataStructures.LinkedList<Doctor> supervisors;
+        public Infrastructure.DataStructures.LinkedList<Doctor> Supervisors
         {
             get { return supervisors; }
             set { supervisors = value; }
@@ -29,7 +29,7 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Treatments
 
         public InternalTreatment() : base()
         {
-            supervisors = new LinkedList<Doctor>();
+            supervisors = new Infrastructure.DataStructures.LinkedList<Doctor>();
         }
 
         public InternalTreatment(int treatmentId, int patientId, DateTime treatmentDate, decimal cost, DateTime? dischargeDate, int departmentId)
@@ -37,7 +37,7 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Treatments
         {
             this.dischargeDate = dischargeDate;
             this.departmentId = departmentId;
-            supervisors = new LinkedList<Doctor>();
+            supervisors = new Infrastructure.DataStructures.LinkedList<Doctor>();
         }
 
         ~InternalTreatment() { }

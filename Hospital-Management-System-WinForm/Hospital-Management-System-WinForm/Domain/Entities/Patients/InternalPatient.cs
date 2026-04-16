@@ -6,15 +6,15 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Patients
 {
     public class InternalPatient : Patient // مريض داخلي
     {
-        private LinkedList<InternalTreatment> internalTreatments;
-        public LinkedList<InternalTreatment> InternalTreatments
+        private Infrastructure.DataStructures.LinkedList<InternalTreatment> internalTreatments;
+        public Infrastructure.DataStructures.LinkedList<InternalTreatment> InternalTreatments
         {
             get { return internalTreatments; }
             set { internalTreatments = value; }
         }
 
-        private LinkedList<ExternalTreatment> externalTreatments;
-        public LinkedList<ExternalTreatment> ExternalTreatments
+        private Infrastructure.DataStructures.LinkedList<ExternalTreatment> externalTreatments;
+        public Infrastructure.DataStructures.LinkedList<ExternalTreatment> ExternalTreatments
         {
             get { return externalTreatments; }
             set { externalTreatments = value; }
@@ -29,16 +29,16 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Patients
 
         public InternalPatient() : base()
         {
-            internalTreatments = new LinkedList<InternalTreatment>();
-            externalTreatments = new LinkedList<ExternalTreatment>();
+            internalTreatments = new Infrastructure.DataStructures.LinkedList<InternalTreatment>();
+            externalTreatments = new Infrastructure.DataStructures.LinkedList<ExternalTreatment>();
         }
 
         public InternalPatient(int patientId, string patientName, string address, DateTime birthDate, bool isDischarged)
             : base(patientId, patientName, address, birthDate)
         {
             this.isDischarged = isDischarged;
-            internalTreatments = new LinkedList<InternalTreatment>();
-            externalTreatments = new LinkedList<ExternalTreatment>();
+            internalTreatments = new Infrastructure.DataStructures.LinkedList<InternalTreatment>();
+            externalTreatments = new Infrastructure.DataStructures.LinkedList<ExternalTreatment>();
         }
 
         ~InternalPatient() { }

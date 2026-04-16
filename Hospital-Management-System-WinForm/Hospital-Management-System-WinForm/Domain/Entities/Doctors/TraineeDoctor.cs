@@ -45,10 +45,14 @@ namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
             if (TrainingEndORNow.Month < trainingStartDate.Month || (TrainingEndORNow.Month == trainingStartDate.Month && TrainingEndORNow.Day < trainingStartDate.Day))
             { years--; }
 
-            if (years < 1) {
-                salary = StaffDoctor.BaseStaffSalary * 0.5m; }
-            else { 
-                salary = StaffDoctor.BaseStaffSalary * 0.75m; }
+            if (years < 1)
+            {
+                salary = StaffDoctor.BaseStaffSalary * 0.5m;
+            }
+            else
+            {
+                salary = StaffDoctor.BaseStaffSalary * 0.75m;
+            }
 
             return salary;
         }
