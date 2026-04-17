@@ -1,47 +1,30 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Patients
 {
     public abstract class Patient
     {
-        private int patientId;
-        public int PatientID
+        [Key]
+        public int PatientID { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string PatientName { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string Address { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime BirthDate { get; set; }
+
+        protected Patient() { }
+
+        protected Patient(int patientId, string patientName, string address, DateTime birthDate)
         {
-            get { return patientId; }
-            set { patientId = value; }
+            PatientID = patientId;
+            PatientName = patientName;
+            Address = address;
+            BirthDate = birthDate;
         }
-
-        private string patientName;
-        public string PatientName
-        {
-            get { return patientName; }
-            set { patientName = value; }
-        }
-
-        private string address;
-        public string Address
-        {
-            get { return address; }
-            set { address = value; }
-        }
-
-        private DateTime birthDate;
-        public DateTime BirthDate
-        {
-            get { return birthDate; }
-            set { birthDate = value; }
-        }
-
-        public Patient() { }
-
-        public Patient(int patientId, string patientName, string address, DateTime birthDate)
-        {
-            this.patientId = patientId;
-            this.patientName = patientName;
-            this.address = address;
-            this.birthDate = birthDate;
-        }
-
-        ~Patient() { }
     }
 }

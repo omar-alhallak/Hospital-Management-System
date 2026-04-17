@@ -1,62 +1,55 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
 {
-    public class TraineeDoctor : Doctor // طبيب المتدرب
+    public class TraineeDoctor : Doctor
     {
-        private DateTime trainingStartDate;
-        public DateTime TrainingStartDate
-        {
-            get { return trainingStartDate; }
-            set { trainingStartDate = value; }
-        }
+        [Required]
+        public DateTime TrainingStartDate { get; set; }
 
-        private DateTime? trainingEndDate;
-        public DateTime? TrainingEndDate
-        {
-            get { return trainingEndDate; }
-            set { trainingEndDate = value; }
-        }
+        public DateTime? TrainingEndDate { get; set; }
 
-        private decimal salary;
-        public decimal Salary
-        {
-            get { return salary; }
-            set { salary = value; }
-        }
+        [Range(0, double.MaxValue)]
+        public decimal Salary { get; private set; }
 
-        public TraineeDoctor() : base() { }
+        public TraineeDoctor()
+        {
+        }
 
         public TraineeDoctor(int doctorId, string doctorName, string address, DateTime birthDate, DateTime trainingStartDate, DateTime? trainingEndDate)
             : base(doctorId, doctorName, address, birthDate)
         {
-            this.trainingStartDate = trainingStartDate;
-            this.trainingEndDate = trainingEndDate;
-            salary = 0;
-            CalculateSalary();
+            TrainingStartDate = trainingStartDate;
+            TrainingEndDate = trainingEndDate;
         }
 
-        public override decimal CalculateSalary() // First year = 50% / Secound year = 75%
+        public decimal CalculateSalary(decimal baseStaffSalary)
         {
-            DateTime TrainingEndORNow = trainingEndDate ?? DateTime.Now;
+            DateTime trainingEndOrNow = TrainingEndDate ?? DateTime.Now;
 
-            int years = TrainingEndORNow.Year - trainingStartDate.Year;
+            int years = trainingEndOrNow.Year - TrainingStartDate.Year;
 
-            if (TrainingEndORNow.Month < trainingStartDate.Month || (TrainingEndORNow.Month == trainingStartDate.Month && TrainingEndORNow.Day < trainingStartDate.Day))
-            { years--; }
+            if (trainingEndOrNow.Month < TrainingStartDate.Month ||
+                (trainingEndOrNow.Month == TrainingStartDate.Month && trainingEndOrNow.Day < TrainingStartDate.Day))
+            {
+                years--;
+            }
 
             if (years < 1)
             {
-                salary = StaffDoctor.BaseStaffSalary * 0.5m;
+                Salary = baseStaffSalary * 0.5m;
             }
             else
             {
-                salary = StaffDoctor.BaseStaffSalary * 0.75m;
+                Salary = baseStaffSalary * 0.75m;
             }
 
-            return salary;
+            return Salary;
         }
 
-        ~TraineeDoctor() { }
+        public override decimal CalculateSalary()
+        {
+            throw new NotImplementedException("Use CalculateSalary(baseStaffSalary)");
+        }
     }
 }

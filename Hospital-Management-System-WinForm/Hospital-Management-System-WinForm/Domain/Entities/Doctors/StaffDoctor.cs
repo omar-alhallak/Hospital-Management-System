@@ -1,55 +1,49 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
 {
-    public class StaffDoctor : Doctor // طبيب المثبت
+    public class StaffDoctor : Doctor
     {
-        private DateTime hireDate;
-        public DateTime HireDate
-        {
-            get { return hireDate; }
-            set { hireDate = value; }
-        }
+        [Required]
+        public DateTime HireDate { get; set; }
 
-        private decimal salary;
-        public decimal Salary
-        {
-            get { return salary; }
-            set { salary = value; }
-        }
+        [Range(0, double.MaxValue)]
+        public decimal Salary { get; private set; }
 
-        public static decimal BaseStaffSalary { get; set; } = 1000m;
-
-        public StaffDoctor() : base() { }
+        public StaffDoctor() { }
 
         public StaffDoctor(int doctorId, string doctorName, string address, DateTime birthDate, DateTime hireDate)
             : base(doctorId, doctorName, address, birthDate)
         {
-            this.hireDate = hireDate;
-            salary = 0;
-            CalculateSalary();
+            HireDate = hireDate;
         }
 
-        public override decimal CalculateSalary() // BaseSalary + 10% (Every 2 years)
+        public decimal CalculateSalary(decimal baseStaffSalary)
         {
-            decimal FinalSalary = BaseStaffSalary;
+            decimal finalSalary = baseStaffSalary;
 
-            int years = DateTime.Now.Year - hireDate.Year;
+            int years = DateTime.Now.Year - HireDate.Year;
 
-            if (DateTime.Now.Month < hireDate.Month || (DateTime.Now.Month == hireDate.Month && DateTime.Now.Day < hireDate.Day))
-            { years--; }
-
-            int NumberOfIncreases = years / 2;
-
-            for (int i = 0; i < NumberOfIncreases; i++)
+            if (DateTime.Now.Month < HireDate.Month ||
+               (DateTime.Now.Month == HireDate.Month && DateTime.Now.Day < HireDate.Day))
             {
-                FinalSalary += FinalSalary * 0.10m;
+                years--;
             }
 
-            salary = FinalSalary;
-            return salary;
+            int numberOfIncreases = years / 2;
+
+            for (int i = 0; i < numberOfIncreases; i++)
+            {
+                finalSalary += finalSalary * 0.10m;
+            }
+
+            Salary = finalSalary;
+            return Salary;
         }
 
-        ~StaffDoctor() { }
+        public override decimal CalculateSalary()
+        {
+            throw new NotImplementedException("Use CalculateSalary(baseStaffSalary)");
+        }
     }
 }

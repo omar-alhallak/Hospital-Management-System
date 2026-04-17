@@ -1,34 +1,14 @@
-﻿using System;
-
-namespace Hospital_Management_System_WinForm.Infrastructure.DataStructures
+﻿namespace Hospital_Management_System_WinForm.Infrastructure.DataStructures
 {
     public class Node<T>
     {
-        private T? data;
-        public T? Data
-        {
-            get { return data; }
-            set { data = value; }
-        }
+        public T Data { get; set; }
 
-        private Node<T>? next;
-        public Node<T>? Next
-        {
-            get { return next; }
-            set { next = value; }
-        }
-
-        public Node()
-        {
-            next = null;
-        }
+        public Node<T>? Next { get; set; }
 
         public Node(T data)
         {
-            this.data = data;
-            next = null;
+            Data = data;
         }
-
-        ~Node() { }
     }
 }

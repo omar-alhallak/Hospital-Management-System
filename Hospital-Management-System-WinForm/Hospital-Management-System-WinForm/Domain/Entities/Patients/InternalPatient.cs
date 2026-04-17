@@ -1,46 +1,21 @@
-﻿using System;
-using Hospital_Management_System_WinForm.Domain.Entities.Treatments;
-using Hospital_Management_System_WinForm.Infrastructure.DataStructures;
+﻿using Hospital_Management_System_WinForm.Domain.Entities.Treatments;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Patients
 {
-    public class InternalPatient : Patient // مريض داخلي
+    public class InternalPatient : Patient
     {
-        private Infrastructure.DataStructures.LinkedList<InternalTreatment> internalTreatments;
-        public Infrastructure.DataStructures.LinkedList<InternalTreatment> InternalTreatments
-        {
-            get { return internalTreatments; }
-            set { internalTreatments = value; }
-        }
+        public ICollection<InternalTreatment> InternalTreatments { get; set; } = new List<InternalTreatment>();
 
-        private Infrastructure.DataStructures.LinkedList<ExternalTreatment> externalTreatments;
-        public Infrastructure.DataStructures.LinkedList<ExternalTreatment> ExternalTreatments
-        {
-            get { return externalTreatments; }
-            set { externalTreatments = value; }
-        }
+        public ICollection<ExternalTreatment> ExternalTreatments { get; set; } = new List<ExternalTreatment>();
 
-        private bool isDischarged;
-        public bool IsDischarged
-        {
-            get { return isDischarged; }
-            set { isDischarged = value; }
-        }
+        public bool IsDischarged { get; set; }
 
-        public InternalPatient() : base()
-        {
-            internalTreatments = new Infrastructure.DataStructures.LinkedList<InternalTreatment>();
-            externalTreatments = new Infrastructure.DataStructures.LinkedList<ExternalTreatment>();
-        }
+        public InternalPatient() { }
 
         public InternalPatient(int patientId, string patientName, string address, DateTime birthDate, bool isDischarged)
             : base(patientId, patientName, address, birthDate)
         {
-            this.isDischarged = isDischarged;
-            internalTreatments = new Infrastructure.DataStructures.LinkedList<InternalTreatment>();
-            externalTreatments = new Infrastructure.DataStructures.LinkedList<ExternalTreatment>();
+            IsDischarged = isDischarged;
         }
-
-        ~InternalPatient() { }
     }
 }

@@ -1,61 +1,40 @@
-﻿using System;
-using System.Numerics;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
 {
-    public class ContractDoctor : Doctor // طبيب المتقاعد
+    public class ContractDoctor : Doctor
     {
-        private decimal totalTreatmentCost;
-        public decimal TotalTreatmentCost
-        {
-            get { return totalTreatmentCost; }
-            set { totalTreatmentCost = value; }
-        }
+        [Range(0, double.MaxValue)]
+        public decimal TotalTreatmentCost { get; set; }
 
-        private decimal salary;
-        public decimal Salary
-        {
-            get { return salary; }
-            set { salary = value; }
-        }
+        [Range(0, double.MaxValue)]
+        public decimal Salary { get; private set; }
 
-        public ContractDoctor() : base()
-        {
-            totalTreatmentCost = 0;
-            salary = 0;
-        }
+        public ContractDoctor() { }
 
         public ContractDoctor(int doctorId, string doctorName, string address, DateTime birthDate)
-            : base(doctorId, doctorName, address, birthDate)
-        {
-            totalTreatmentCost = 0;
-            salary = 0;
-        }
+            : base(doctorId, doctorName, address, birthDate) { }
 
-        public void AddTreatmentCost(decimal cost) // عند إضافة علاج يزيد و يحدث الراتب
+        public void AddTreatmentCost(decimal cost)
         {
-            totalTreatmentCost += cost;
+            TotalTreatmentCost += cost;
             CalculateSalary();
         }
 
-        public void RemoveTreatmentCost(decimal cost) // عند حذف علاج ينقصه و يحدث الراتب
+        public void RemoveTreatmentCost(decimal cost)
         {
-            totalTreatmentCost -= cost;
+            TotalTreatmentCost -= cost;
 
-            if (totalTreatmentCost < 0)
-            {
-                totalTreatmentCost = 0;
-            }
+            if (TotalTreatmentCost < 0)
+                TotalTreatmentCost = 0;
 
             CalculateSalary();
         }
 
-        public override decimal CalculateSalary() // Salary = 50% من قيمة المعالجات
+        public override decimal CalculateSalary()
         {
-            salary = totalTreatmentCost * 0.5m;
-            return salary;
+            Salary = TotalTreatmentCost * 0.5m;
+            return Salary;
         }
-
-        ~ContractDoctor() { }
     }
 }

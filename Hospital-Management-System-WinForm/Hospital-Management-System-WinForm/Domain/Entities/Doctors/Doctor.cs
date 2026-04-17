@@ -1,49 +1,32 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Doctors
 {
     public abstract class Doctor
     {
-        private int doctorId;
-        public int DoctorID
+        [Key]
+        public int DoctorID { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string DoctorName { get; set; } = string.Empty;
+
+        [MaxLength(50)]
+        public string Address { get; set; } = string.Empty;
+
+        [Required]
+        public DateTime BirthDate { get; set; }
+
+        protected Doctor() { }
+
+        protected Doctor(int doctorId, string doctorName, string address, DateTime birthDate)
         {
-            get { return doctorId; }
-            set { doctorId = value; }
+            DoctorID = doctorId;
+            DoctorName = doctorName;
+            Address = address;
+            BirthDate = birthDate;
         }
 
-        private string doctorName;
-        public string DoctorName
-        {
-            get { return doctorName; }
-            set { doctorName = value; }
-        }
-
-        private string address;
-        public string Address
-        {
-            get { return address; }
-            set { address = value; }
-        }
-
-        private DateTime birthDate;
-        public DateTime BirthDate
-        {
-            get { return birthDate; }
-            set { birthDate = value; }
-        }
-
-        public Doctor() { }
-
-        public Doctor(int doctorId, string doctorName, string address, DateTime birthDate)
-        {
-            this.doctorId = doctorId;
-            this.doctorName = doctorName;
-            this.address = address;
-            this.birthDate = birthDate;
-        }
-
-        public abstract decimal CalculateSalary(); // حساب الرواتب
-
-        ~Doctor() { }
+        public abstract decimal CalculateSalary();
     }
 }

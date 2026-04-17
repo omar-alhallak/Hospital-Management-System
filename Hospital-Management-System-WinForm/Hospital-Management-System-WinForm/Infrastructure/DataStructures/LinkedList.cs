@@ -1,34 +1,24 @@
-﻿using System;
-
-namespace Hospital_Management_System_WinForm.Infrastructure.DataStructures
+﻿namespace Hospital_Management_System_WinForm.Infrastructure.DataStructures
 {
     public class LinkedList<T>
     {
         private Node<T>? head;
-        public Node<T>? Head
-        {
-            get { return head; }
-            set { head = value; }
-        }
 
-        public LinkedList()
-        {
-            head = null;
-        }
+        public Node<T>? Head => head;
 
-        ~LinkedList() { }
+        public LinkedList() => head = null;
 
         public void AddLast(T data)
         {
             Node<T> newNode = new Node<T>(data);
 
-            if (Head == null)
+            if (head == null)
             {
-                Head = newNode;
+                head = newNode;
                 return;
             }
 
-            Node<T> current = Head;
+            Node<T> current = head;
 
             while (current.Next != null)
             {

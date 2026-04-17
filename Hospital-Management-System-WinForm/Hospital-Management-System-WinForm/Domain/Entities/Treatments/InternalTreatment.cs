@@ -1,45 +1,24 @@
-﻿using System;
-using Hospital_Management_System_WinForm.Infrastructure.DataStructures;
+﻿using System.ComponentModel.DataAnnotations;
 using Hospital_Management_System_WinForm.Domain.Entities.Doctors;
 
 namespace Hospital_Management_System_WinForm.Domain.Entities.Treatments
 {
-    public class InternalTreatment : Treatment // معالجة داخلية
+    public class InternalTreatment : Treatment
     {
-        private DateTime? dischargeDate;
-        public DateTime? DischargeDate
-        {
-            get { return dischargeDate; }
-            set { dischargeDate = value; }
-        }
+        public DateTime? DischargeDate { get; set; }
 
-        private int departmentId;
-        public int DepartmentID
-        {
-            get { return departmentId; }
-            set { departmentId = value; }
-        }
+        [Required]
+        public int DepartmentID { get; set; }
 
-        private Infrastructure.DataStructures.LinkedList<Doctor> supervisors;
-        public Infrastructure.DataStructures.LinkedList<Doctor> Supervisors
-        {
-            get { return supervisors; }
-            set { supervisors = value; }
-        }
+        public ICollection<Doctor> Supervisors { get; set; } = new List<Doctor>();
 
-        public InternalTreatment() : base()
-        {
-            supervisors = new Infrastructure.DataStructures.LinkedList<Doctor>();
-        }
+        public InternalTreatment() { }
 
         public InternalTreatment(int treatmentId, int patientId, DateTime treatmentDate, decimal cost, DateTime? dischargeDate, int departmentId)
             : base(treatmentId, patientId, treatmentDate, cost)
         {
-            this.dischargeDate = dischargeDate;
-            this.departmentId = departmentId;
-            supervisors = new Infrastructure.DataStructures.LinkedList<Doctor>();
+            DischargeDate = dischargeDate;
+            DepartmentID = departmentId;
         }
-
-        ~InternalTreatment() { }
     }
 }
