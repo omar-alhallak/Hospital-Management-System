@@ -15,11 +15,11 @@ namespace Hospital_Management_System_WinForm
                 {
                     services.AddInfrastructure();
 
-                    services.AddTransient<Form1>();
+                    services.AddTransient<MainForm>();
                 }).Build();
 
             ApplicationConfiguration.Initialize();
-            System.Windows.Forms.Application.Run(host.Services.GetRequiredService<Form1>());
+            System.Windows.Forms.Application.Run(host.Services.GetRequiredService<MainForm>());
         }
     }
 }
