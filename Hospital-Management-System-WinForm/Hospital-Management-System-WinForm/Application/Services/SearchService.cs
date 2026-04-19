@@ -1,54 +1,30 @@
-﻿//using System;
-//using Hospital_Management_System_WinForm.Domain.Entities.Doctors;
-//using Hospital_Management_System_WinForm.Domain.Entities.Patients;
-//using Hospital_Management_System_WinForm.Infrastructure.DataStructures;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Hospital_Management_System_WinForm.Domain.Entities.Doctors;
 
-//namespace Hospital_Management_System_WinForm.Application.Services
-//{
-//    public static class SearchService // مسؤول عن البحث عن طريق الأسم
-//    {
-//        public static Infrastructure.DataStructures.LinkedList<Doctor> SearchDoctorsByName(Infrastructure.DataStructures.LinkedList<Doctor> doctors, string searchText)
-//        {
-//            Infrastructure.DataStructures.LinkedList<Doctor> result = new Infrastructure.DataStructures.LinkedList<Doctor>();
+namespace Hospital_Management_System_WinForm.Application.Services
+{
+    public static class DoctorSearchService
+    {
+        public static List<Doctor> Search(List<Doctor> doctors, string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                return doctors;
 
-//            if (doctors == null || string.IsNullOrWhiteSpace(searchText)) return result;
+            input = input.Trim();
 
-//            Node<Doctor> current = doctors.Head;
+            // إذا رقم → بحث بالـ ID
+            if (int.TryParse(input, out int id))
+            {
+                return doctors
+                    .Where(d => d.DoctorID == id)
+                    .ToList();
+            }
 
-//            while (current != null)
-//            {
-//                if (current.Data.DoctorName != null &&
-//                    current.Data.DoctorName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-//                {
-//                    result.AddLast(current.Data);
-//                }
-
-//                current = current.Next;
-//            }
-
-//            return result;
-//        }
-
-//        public static Infrastructure.DataStructures.LinkedList<Patient> SearchPatientsByName(Infrastructure.DataStructures.LinkedList<Patient> patients, string searchText)
-//        {
-//            Infrastructure.DataStructures.LinkedList<Patient> result = new Infrastructure.DataStructures.LinkedList<Patient>();
-
-//            if (patients == null || string.IsNullOrWhiteSpace(searchText)) return result;
-
-//            Node<Patient> current = patients.Head;
-
-//            while (current != null)
-//            {
-//                if (current.Data.PatientName != null &&
-//                    current.Data.PatientName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
-//                {
-//                    result.AddLast(current.Data);
-//                }
-
-//                current = current.Next;
-//            }
-
-//            return result;
-//        }
-//    }
-//}
+            // غير هيك → بحث بالاسم (Live search)
+            return doctors
+                .Where(d => d.DoctorName.ToLower().Contains(input.ToLower()))
+                .ToList();
+        }
+    }
+}

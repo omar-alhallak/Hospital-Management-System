@@ -13,8 +13,6 @@ namespace Hospital_Management_System_WinForm
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddInfrastructure();
-
                     services.AddTransient<MainForm>();
                 }).Build();
 

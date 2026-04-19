@@ -1,229 +1,243 @@
-﻿//using System;
-//using Hospital_Management_System_WinForm.Application.Services;
-//using Hospital_Management_System_WinForm.Domain.Entities.Doctors;
-//using Hospital_Management_System_WinForm.Infrastructure.DataStructures;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Hospital_Management_System_WinForm.Domain.Entities.Doctors;
+using Hospital_Management_System_WinForm.Infrastructure.Repositories;
+using Hospital_Management_System_WinForm.Application.Services;
 
-//namespace Hospital_Management_System_WinForm.Application.Management
-//{
-//    public class DoctorManagement // إدارة الأطباء
-//    {
-//        private Infrastructure.DataStructures.LinkedList<Doctor> doctors;
-//        public Infrastructure.DataStructures.LinkedList<Doctor> Doctors
-//        {
-//            get { return doctors; }
-//            set { doctors = value; }
-//        }
+namespace Hospital_Management_System_WinForm.Application.Management
+{
+    public class DoctorManagement
+    {
+        private List<Doctor> doctors;
 
-//        public DoctorManagement()
-//        {
-//            doctors = new Infrastructure.DataStructures.LinkedList<Doctor>();
-//        }
+        private readonly DoctorRepository doctorRepository;
+        private readonly ContractDoctorRepository contractRepository;
+        private readonly StaffDoctorRepository staffRepository;
+        private readonly TraineeDoctorRepository traineeRepository;
+        private readonly SystemSettingsRepository settingsRepository;
 
-//        public void AddDoctor(Doctor doctor) // إضافة
-//        {
-//            if (doctor == null) return;
+        public List<Doctor> Doctors => doctors;
 
-//            if (FindDoctorById(doctor.DoctorID) != null) return;
+        public DoctorManagement()
+        {
+            doctorRepository = new DoctorRepository();
+            contractRepository = new ContractDoctorRepository();
+            staffRepository = new StaffDoctorRepository();
+            traineeRepository = new TraineeDoctorRepository();
+            settingsRepository = new SystemSettingsRepository();
 
-//            Node<Doctor> newNode = new Node<Doctor>(doctor);
+            doctors = LoadDoctors();
+        }
 
-//            if (doctors.Head == null)
-//            {
-//                doctors.Head = newNode;
-//                return;
-//            }
+        private List<Doctor> LoadDoctors()
+        {
+            List<Doctor> list = new List<Doctor>();
 
-//            if (doctor.DoctorID < doctors.Head.Data.DoctorID)
-//            {
-//                newNode.Next = doctors.Head;
-//                doctors.Head = newNode;
-//                return;
-//            }
+            list.AddRange(contractRepository.GetAll());
 
-//            Node<Doctor> current = doctors.Head;
+            decimal baseSalary = settingsRepository.GetBaseStaffSalary();
 
-//            while (current.Next != null && current.Next.Data.DoctorID < doctor.DoctorID)
-//            {
-//                current = current.Next;
-//            }
+            List<StaffDoctor> staffDoctors = staffRepository.GetAll();
+            foreach (StaffDoctor doctor in staffDoctors)
+            {
+                doctor.CalculateSalary(baseSalary);
+                list.Add(doctor);
+            }
 
-//            newNode.Next = current.Next;
-//            current.Next = newNode;
-//        }
+            List<TraineeDoctor> traineeDoctors = traineeRepository.GetAll();
+            foreach (TraineeDoctor doctor in traineeDoctors)
+            {
+                doctor.CalculateSalary(baseSalary);
+                list.Add(doctor);
+            }
 
-//        public void DeleteDoctor(int doctorId) // حذف
-//        {
-//            if (doctors.Head == null) return;
+            return list.OrderBy(d => d.DoctorID).ToList();
+        }
 
-//            if (doctors.Head.Data.DoctorID == doctorId)
-//            {
-//                doctors.Head = doctors.Head.Next;
-//                return;
-//            }
+        // ================= ADD =================
+        public void AddDoctor(Doctor doctor)
+        {
+            if (doctor == null) return;
 
-//            Node<Doctor> current = doctors.Head;
+            if (doctors.Any(d => d.DoctorID == doctor.DoctorID))
+                throw new Exception("ID already exists.");
 
-//            while (current.Next != null && current.Next.Data.DoctorID != doctorId)
-//            {
-//                current = current.Next;
-//            }
+            doctor.DoctorName = ValidationService.NormalizeText(doctor.DoctorName);
+            doctor.Address = ValidationService.NormalizeText(doctor.Address);
+            ValidationService.ValidateBirthDate(doctor.BirthDate);
 
-//            if (current.Next != null) { current.Next = current.Next.Next; }
-//        }
+            if (doctor is StaffDoctor staffDoctorForValidation)
+                ValidationService.ValidateHireDate(staffDoctorForValidation.BirthDate, staffDoctorForValidation.HireDate);
 
-//        public Doctor FindDoctorById(int doctorId) // البحث عن طريق ID
-//        {
-//            Node<Doctor> current = doctors.Head;
+            if (doctor is TraineeDoctor traineeDoctorForValidation)
+                ValidationService.ValidateTrainingDates(
+                    traineeDoctorForValidation.BirthDate,
+                    traineeDoctorForValidation.TrainingStartDate,
+                    traineeDoctorForValidation.TrainingEndDate);
 
-//            while (current != null)
-//            {
-//                if (current.Data.DoctorID == doctorId) return current.Data;
+            int id = doctorRepository.AddDoctor(doctor);
+            doctor.DoctorID = id;
 
-//                current = current.Next;
-//            }
+            if (doctor is ContractDoctor contractDoctor)
+            {
+                contractDoctor.CalculateSalary();
+                contractRepository.Add(contractDoctor);
+            }
+            else if (doctor is StaffDoctor staffDoctor)
+            {
+                decimal baseSalary = settingsRepository.GetBaseStaffSalary();
+                staffDoctor.CalculateSalary(baseSalary);
+                staffRepository.Add(staffDoctor);
+            }
+            else if (doctor is TraineeDoctor traineeDoctor)
+            {
+                decimal baseSalary = settingsRepository.GetBaseStaffSalary();
+                traineeDoctor.CalculateSalary(baseSalary);
+                traineeRepository.Add(traineeDoctor);
+            }
 
-//            return null;
-//        }
+            doctors.Add(doctor);
+            doctors = doctors.OrderBy(d => d.DoctorID).ToList();
+        }
 
-//        public Infrastructure.DataStructures.LinkedList<Doctor> SearchDoctorsByName(string searchText) // البحث عن طريق Name
-//        {
-//            return SearchService.SearchDoctorsByName(doctors, searchText);
-//        }
+        // ================= DELETE =================
+        public void DeleteDoctor(int id)
+        {
+            Doctor doctor = doctors.FirstOrDefault(d => d.DoctorID == id);
+            if (doctor == null) return;
 
-//        public void PromoteTraineeDoctor(int doctorId) // تثبيت الطبيب المتدرب
-//        {
-//            Node<Doctor> current = doctors.Head;
+            if (doctor is ContractDoctor contractDoctor && contractDoctor.TotalTreatmentCost > 0)
+                throw new Exception("Cannot delete contract doctor with treatments.");
 
-//            while (current != null)
-//            {
-//                if (current.Data.DoctorID == doctorId && current.Data is TraineeDoctor)
-//                {
-//                    TraineeDoctor trainee = (TraineeDoctor)current.Data;
+            contractRepository.Delete(id);
+            staffRepository.Delete(id);
+            traineeRepository.Delete(id);
+            doctorRepository.DeleteDoctor(id);
 
-//                    DateTime hireDate;
+            doctors.Remove(doctor);
+        }
 
-//                    if (trainee.TrainingEndDate != null) { hireDate = trainee.TrainingEndDate.Value; }
+        // ================= FIND =================
+        public Doctor FindDoctorById(int id)
+        {
+            return doctors.FirstOrDefault(d => d.DoctorID == id);
+        }
 
-//                    else { hireDate = DateTime.Now; }
+        // ================= UPDATE =================
+        public void UpdateDoctor(int id, string name, string address, DateTime birthDate)
+        {
+            Doctor doctor = doctors.FirstOrDefault(d => d.DoctorID == id);
+            if (doctor == null) return;
 
-//                    StaffDoctor staffDoctor = new StaffDoctor(trainee.DoctorID, trainee.DoctorName, trainee.Address, trainee.BirthDate, hireDate);
+            name = ValidationService.NormalizeText(name);
+            address = ValidationService.NormalizeText(address);
+            ValidationService.ValidateBirthDate(birthDate);
 
-//                    current.Data = staffDoctor;
-//                    return;
-//                }
+            doctor.DoctorName = name;
+            doctor.Address = address;
+            doctor.BirthDate = birthDate;
 
-//                current = current.Next;
-//            }
-//        }
+            doctorRepository.UpdateDoctorName(id, name);
+            doctorRepository.UpdateDoctorAddress(id, address);
+            doctorRepository.UpdateDoctorBirthDate(id, birthDate);
+        }
 
-//        // ---------- UPDATE ----------
-//        public void UpdateDoctorName(int doctorId, string doctorName) // تحديث الأسم
-//        {
-//            Doctor doctor = FindDoctorById(doctorId);
+        // ================= SEARCH =================
+        public List<Doctor> Search(string input)
+        {
+            return DoctorSearchService.Search(doctors, input);
+        }
 
-//            if (doctor != null) { doctor.DoctorName = doctorName; }
-//        }
+        // ================= DISPLAY =================
+        public List<Doctor> GetAll()
+        {
+            return doctors;
+        }
 
-//        public void UpdateDoctorAddress(int doctorId, string address) // تحديث العنوان
-//        {
-//            Doctor doctor = FindDoctorById(doctorId);
+        public List<Doctor> GetByType<T>() where T : Doctor
+        {
+            return doctors.OfType<T>().Cast<Doctor>().ToList();
+        }
 
-//            if (doctor != null) { doctor.Address = address; }
-//        }
+        // ================= SALARY =================
+        public void RefreshAllDoctorSalaries()
+        {
+            decimal baseSalary = settingsRepository.GetBaseStaffSalary();
 
-//        public void UpdateDoctorBirthDate(int doctorId, DateTime birthDate) // تحديث الميلاد
-//        {
-//            Doctor doctor = FindDoctorById(doctorId);
+            foreach (Doctor doctor in doctors)
+            {
+                if (doctor is ContractDoctor contractDoctor)
+                {
+                    contractDoctor.CalculateSalary();
+                    contractRepository.Update(contractDoctor);
+                }
+                else if (doctor is StaffDoctor staffDoctor)
+                {
+                    staffDoctor.CalculateSalary(baseSalary);
+                    staffRepository.Update(staffDoctor);
+                }
+                else if (doctor is TraineeDoctor traineeDoctor)
+                {
+                    traineeDoctor.CalculateSalary(baseSalary);
+                    traineeRepository.Update(traineeDoctor);
+                }
+            }
+        }
 
-//            if (doctor != null) { doctor.BirthDate = birthDate; }
-//        }
+        public void UpdateBaseStaffSalary(decimal salary)
+        {
+            settingsRepository.UpdateBaseStaffSalary(salary);
+            RefreshAllDoctorSalaries();
+        }
 
-//        public void RefreshAllDoctorSalaries() // تحديث كل رواتب الأطباء
-//        {
-//            Node<Doctor> current = doctors.Head;
+        // ================= PROMOTE =================
+        public void PromoteTraineeDoctor(int id)
+        {
+            Doctor doctor = doctors.FirstOrDefault(d => d.DoctorID == id);
+            if (doctor == null) return;
 
-//            while (current != null)
-//            {
-//                current.Data.CalculateSalary();
-//                current = current.Next;
-//            }
-//        }
+            if (doctor is not TraineeDoctor traineeDoctor) return;
 
-//        public void ResetContractDoctorsTreatmentCosts() // تحديث راتب الطبيب المتقاعد
-//        {
-//            Node<Doctor> current = doctors.Head;
+            DateTime hireDate = traineeDoctor.TrainingEndDate ?? DateTime.Now;
 
-//            while (current != null)
-//            {
-//                if (current.Data is ContractDoctor)
-//                {
-//                    ContractDoctor contractDoctor = (ContractDoctor)current.Data;
-//                    contractDoctor.TotalTreatmentCost = 0;
-//                    contractDoctor.CalculateSalary();
-//                }
+            StaffDoctor staffDoctor = new StaffDoctor(
+                traineeDoctor.DoctorID,
+                traineeDoctor.DoctorName,
+                traineeDoctor.Address,
+                traineeDoctor.BirthDate,
+                hireDate);
 
-//                current = current.Next;
-//            }
-//        }
-//        // ----------------------------------------------------------------
+            decimal baseSalary = settingsRepository.GetBaseStaffSalary();
+            staffDoctor.CalculateSalary(baseSalary);
 
-//        public int GetDoctorsCount() // حساب عدد جميع الأطباء
-//        {
-//            int count = 0;
-//            Node<Doctor> current = doctors.Head;
+            traineeRepository.Delete(id);
+            staffRepository.Add(staffDoctor);
 
-//            while (current != null)
-//            {
-//                count++;
-//                current = current.Next;
-//            }
+            doctors.Remove(traineeDoctor);
+            doctors.Add(staffDoctor);
+            doctors = doctors.OrderBy(d => d.DoctorID).ToList();
+        }
 
-//            return count;
-//        }
+        // ================= COUNTS =================
+        public int GetDoctorsCount()
+        {
+            return doctors.Count;
+        }
 
-//        public int GetStaffDoctorsCount() // حساب عدد الأطباء المثبتين
-//        {
-//            int count = 0;
-//            Node<Doctor> current = doctors.Head;
+        public int GetStaffDoctorsCount()
+        {
+            return doctors.OfType<StaffDoctor>().Count();
+        }
 
-//            while (current != null)
-//            {
-//                if (current.Data is StaffDoctor) count++;
+        public int GetTraineeDoctorsCount()
+        {
+            return doctors.OfType<TraineeDoctor>().Count();
+        }
 
-//                current = current.Next;
-//            }
-
-//            return count;
-//        }
-
-//        public int GetTraineeDoctorsCount() // حساب عدد الأطباء المتدربين
-//        {
-//            int count = 0;
-//            Node<Doctor> current = doctors.Head;
-
-//            while (current != null)
-//            {
-//                if (current.Data is TraineeDoctor) count++;
-
-//                current = current.Next;
-//            }
-
-//            return count;
-//        }
-
-//        public int GetContractDoctorsCount() // حساب عدد الأطباء المتعاقدين
-//        {
-//            int count = 0;
-//            Node<Doctor> current = doctors.Head;
-
-//            while (current != null)
-//            {
-//                if (current.Data is ContractDoctor) count++;
-
-//                current = current.Next;
-//            }
-
-//            return count;
-//        }
-//    }
-//}
+        public int GetContractDoctorsCount()
+        {
+            return doctors.OfType<ContractDoctor>().Count();
+        }
+    }
+}

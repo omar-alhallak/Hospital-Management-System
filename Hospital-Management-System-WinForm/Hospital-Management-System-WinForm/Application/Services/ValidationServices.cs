@@ -1,57 +1,59 @@
-﻿//using System;
-//using System.Text.RegularExpressions;
-//using Hospital_Management_System_WinForm.Application.Management;
-//using Hospital_Management_System_WinForm.Domain.Entities.Doctors;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
-//namespace Hospital_Management_System_WinForm.Application.Services
-//{
-//    public static class ValidationServices
-//    {
-//        public static bool IsValidEnglishText(string text) // أحرف Englich فقط
-//        {
-//            if (string.IsNullOrWhiteSpace(text)) return false;
+namespace Hospital_Management_System_WinForm.Application.Services
+{
+    public static class ValidationService
+    {
+        // ================= ID =================
+        public static void ValidateId(string idText)
+        {
+            if (!int.TryParse(idText, out _))
+                throw new Exception("ID must be numeric.");
+        }
 
-//            return Regex.IsMatch(text, @"^[A-Za-z ]+$");
-//        }
+        // ================= NAME / ADDRESS =================
+        public static string NormalizeText(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input))
+                throw new Exception("Field is required.");
 
-//        public static bool IsPositiveInt(int value) // رقم موجب حصرا لل ID
-//        {
-//            return value > 0;
-//        }
+            // حذف المسافات الزائدة
+            string normalized = Regex.Replace(input.Trim(), @"\s+", " ");
 
-//        public static bool IsPositiveDecimal(decimal value) // رقم موجب حصرا ويسمح بل 0 للرواتب
-//        {
-//            return value >= 0;
-//        }
+            // فقط أحرف إنكليزي + مسافات
+            if (!Regex.IsMatch(normalized, @"^[A-Za-z ]+$"))
+                throw new Exception("Only English letters are allowed.");
 
-//        public static bool IsValidBirthDate(DateTime birthDate) // تحقق من التاريخ ليس بالمستقبل
-//        {
-//            return birthDate < DateTime.Now.Date;
-//        }
+            return normalized;
+        }
 
-//        public static bool IsValidHireDate(DateTime birthDate, DateTime hireDate) // تتأكد من تاريخ تعيين
-//        {
-//            return hireDate <= DateTime.Now && birthDate < hireDate;
-//        }
+        // ================= BIRTH DATE =================
+        public static void ValidateBirthDate(DateTime birthDate)
+        {
+            if (birthDate > DateTime.Now)
+                throw new Exception("Birth date cannot be in the future.");
+        }
 
-//        public static bool IsValidTreatmentDates(DateTime treatmentDate, DateTime dischargeDate) // تاريخ العلاج قبل تاريخ التخريج
-//        {
-//            return treatmentDate <= dischargeDate;
-//        }
+        // ================= HIRE DATE =================
+        public static void ValidateHireDate(DateTime birthDate, DateTime hireDate)
+        {
+            if (hireDate <= birthDate)
+                throw new Exception("Hire date must be after birth date.");
+        }
 
-//        public static bool IsUniqueDoctorId(DoctorManagement doctorRecord, int id) // منع تكرار ID
-//        {
-//            return doctorRecord.FindDoctorById(id) == null;
-//        }
+        // ================= TRAINING =================
+        public static void ValidateTrainingDates(DateTime birthDate, DateTime start, DateTime? end)
+        {
+            if (start <= birthDate)
+                throw new Exception("Training start must be after birth date.");
 
-//        public static bool IsUniquePatientId(PatientManagement patientRecord, int id) // منع تكرار ID
-//        {
-//            return patientRecord.FindPatientById(id) == null;
-//        }
-
-//        public static bool IsUniqueTreatmentId(TreatmentManagement patientRecord, int id) // منع تكرار ID
-//        {
-//            return patientRecord.FindTreatmentById(id) == null;
-//        }
-//    }
-//}
+            if (end != null)
+            {
+                if (end <= start.AddYears(2))
+                    throw new Exception("Training must be at least 2 years.");
+            }
+        }
+    }
+}
